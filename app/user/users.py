@@ -4,6 +4,7 @@ from app.schema.schemas import list_user,user_serial
 from app.config.database import user_db
 from bson import ObjectId
 
+
 router = APIRouter()
 
 #Get all user
