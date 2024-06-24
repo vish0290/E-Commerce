@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Request
-from app.routes import users
+from app.routes.users import router
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 

@@ -8,6 +8,3 @@ router = APIRouter()
 
 
 """Landing page"""
-
-@router.get("/")
-def 
