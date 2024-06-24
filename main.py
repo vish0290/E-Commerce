@@ -13,6 +13,8 @@ templates = Jinja2Templates(directory="app/templates")
 
 app.include_router(router= users.router)
 
+
+product = [{'product':'iphone 13', 'price':'50000'},{'product':'iphone 14','price':'60000'}]
 @app.get("/",response_class=HTMLResponse)
 def homepage(request: Request):
-    return templates.TemplateResponse("index.html",{"request":request, "name":"demo"})
+    return templates.TemplateResponse("home.html",{"request":request, 'product_list':product})
