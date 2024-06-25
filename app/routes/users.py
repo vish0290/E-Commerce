@@ -17,7 +17,7 @@ def login_page(request: Request):
 @router.post('/user_login',response_class=RedirectResponse)
 def login(request: Request, email:str = Form(...), password:str = Form(...)):
     user = get_user_mail(email)
-    if user and user['password'] == password:
+    if user != None and user['password'] == password:
         login_user(request,str(user['email']))
         return RedirectResponse(url='/',status_code=302)
     return templates.TemplateResponse('user_login.html',{'request':request,"error":"invalid email or password"})
