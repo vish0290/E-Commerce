@@ -5,11 +5,13 @@ from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.user import get_user_mail,add_user
 from app.config.session import login_user, get_current_user,logout_user
+from app.crud.category import get_all_category
+
 
 router = APIRouter()
 templates =  Jinja2Templates(directory='app/templates')
 
-
+#user login and logout
 @router.get('/user_login',response_class= HTMLResponse)
 def login_page(request: Request):
     return templates.TemplateResponse("user_login.html",{'request':request})
@@ -26,12 +28,8 @@ def login(request: Request, email:str = Form(...), password:str = Form(...)):
 def user_logout(request: Request):
     logout_user(request)
     return RedirectResponse(url='/')
-        
-@router.get('/', response_class=HTMLResponse)
-def landing_page(request: Request):
-    user = get_current_user(request)
-    return templates.TemplateResponse("user_landing.html",{"request":request,"user":user})
 
+#user registration        
 @router.post('/add_user', response_class=HTMLResponse)
 def user_register(request: Request, name:str = Form(...), email: str=Form(...), password: str=Form(...)):
     item = get_user_mail(email)
@@ -48,3 +46,11 @@ def user_register(request: Request, name:str = Form(...), email: str=Form(...), 
 @router.get('/add_user', response_class=HTMLResponse)
 def user_registration(request: Request):
     return templates.TemplateResponse("user_register.html",{"request":request})
+
+#user landing page
+@router.get('/', response_class=HTMLResponse)
+def landing_page(request: Request):
+    user = get_current_user(request)
+    category = get_all_category()
+    return templates.TemplateResponse("user_landing.html",{"request":request,"user":user,"category":category})
+
