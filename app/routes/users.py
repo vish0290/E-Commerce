@@ -33,13 +33,19 @@ def landing_page(request: Request):
     return templates.TemplateResponse("user_landing.html",{"request":request,"user":user})
 
 @router.post('/add_user', response_class=HTMLResponse)
-def user_register(request: Request, user: User = Form(...)):
-    ack = add_user(user)
-    if ack:
-        return templates.TemplateResponse("user_login.html", {"request": request,"message":"Your account created successfully"})
+def user_register(request: Request, name:str = Form(...), email: str=Form(...), password: str=Form(...)):
+    item = get_user_mail(email)
+    print(item)
+    if item != None:
+        return templates.TemplateResponse("user_register.html", {"request": request,"message":"User Already exist"})
     else:
-        return templates.TemplateResponse("user_register.html", {"request": request,"message":"Something went wrong"})
-
+        user = User(name=name,password=password,email=email)
+        ack = add_user(user)
+        if ack:
+            return RedirectResponse(url='/user_login', status_code=302)
+        else:
+            return templates.TemplateResponse("user_register.html", {"request": request,"message":"Something went wrong"})
+            
 @router.get('/add_user', response_class=HTMLResponse)
 def user_registration(request: Request):
     return templates.TemplateResponse("user_register.html",{"request":request})
