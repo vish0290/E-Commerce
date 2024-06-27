@@ -11,3 +11,14 @@ def user_serial(user) -> dict:
 
 def list_user(users) -> list:
     return [user_serial(user) for user in users]
+
+def seller_serial(seller) -> dict:
+    return {    
+        "name": seller['name'],
+        "email": seller['email'],
+        'password': seller['password'],
+        'phone': seller['phone']
+    }
+    
+def list_seller(sellers) -> list:
+    return [seller_serial(seller) for seller in sellers]

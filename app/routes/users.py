@@ -35,7 +35,6 @@ def landing_page(request: Request):
 @router.post('/add_user', response_class=HTMLResponse)
 def user_register(request: Request, name:str = Form(...), email: str=Form(...), password: str=Form(...)):
     item = get_user_mail(email)
-    print(item)
     if item != None:
         return templates.TemplateResponse("user_register.html", {"request": request,"message":"User Already exist"})
     else:
