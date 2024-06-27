@@ -5,7 +5,8 @@ from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.user import get_user_mail,add_user
 from app.config.session import login_user, get_current_user,logout_user
-from app.crud.category import get_all_category
+from app.crud.category import get_all_category,get_category_name
+from app.crud.product import get_random_product
 
 
 router = APIRouter()
@@ -51,6 +52,7 @@ def user_registration(request: Request):
 @router.get('/', response_class=HTMLResponse)
 def landing_page(request: Request):
     user = get_current_user(request)
-    category = get_all_category()
-    return templates.TemplateResponse("user_landing.html",{"request":request,"user":user,"category":category})
+    categories = get_all_category()
+    products = get_random_product()
+    return templates.TemplateResponse("user_landing.html",{"request":request,"user":user,"categories":categories,"products":products})
 

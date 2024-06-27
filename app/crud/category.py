@@ -24,7 +24,7 @@ def get_all_category():
     except:
         return None
 
-def add_category(category: Category):
+def add_new_category(category: Category):
     ack = category_db.insert_one(dict(category)) 
     if ack.acknowledged:
         return True
