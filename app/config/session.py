@@ -25,6 +25,16 @@ def logout_seller(request: Request):
     request.session.clear()
 
 
+def login_admin(request: Request, admin_id: str):
+    request.session["admin_id"] = admin_id
+    request.session["role"] = "admin"
+    
+def logout_admin(request: Request):
+    request.session.clear()
+
+
+
+
 def get_current_user(request: Request):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
@@ -38,3 +48,11 @@ def get_current_seller(request: Request):
     if seller_id and role == "seller":
         return seller_id
     return None
+
+def get_current_admin(request: Request):
+    admin_id = request.session.get("admin_id")
+    role = request.session.get("role")
+    if admin_id and role == "admin":
+        return admin_id
+    return None
+

@@ -22,3 +22,9 @@ def seller_serial(seller) -> dict:
     
 def list_seller(sellers) -> list:
     return [seller_serial(seller) for seller in sellers]
+
+def admin_serial(admin) -> dict:
+    return {    
+        "username": admin['username'],
+        'password': admin['password']
+    }
