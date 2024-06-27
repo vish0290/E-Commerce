@@ -32,3 +32,12 @@ def dashboard(request: Request):
 def logout(request: Request):
     logout_admin(request)
     return RedirectResponse(url='/admin_login',status_code=302)
+
+@router.post('/add_category',response_class=HTMLResponse)
+def add_category(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
+    category = Category(name=name,description=description,image=image,last_change=str(datetime.datetime.now()))
+    ack = add_category(category)
+    if ack:
+        return RedirectResponse(url='/admin_dashboard',status_code=302)
+    else:
+        return templates.TemplateResponse("add_category.html", {"request": request,"message":"Something went wrong"})

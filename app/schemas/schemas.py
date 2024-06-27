@@ -28,3 +28,13 @@ def admin_serial(admin) -> dict:
         "username": admin['username'],
         'password': admin['password']
     }
+    
+def category_serial(category) -> dict:
+    return {    
+        "name": category['name'],
+        'description': category['description'],
+        'last_change': category['last_change']
+    }
+
+def list_category(categories) -> list:
+    return [category_serial(category) for category in categories]

@@ -21,6 +21,7 @@ class Product(BaseModel):
 class Category(BaseModel):
     name: str
     description: str
+    image: str
     last_change: str 
     
 class Seller(BaseModel):
