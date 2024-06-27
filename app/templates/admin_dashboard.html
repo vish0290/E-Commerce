@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    
+    {% if admin %}
+    <h1>Welcome Admin</h1>
+    <a href="/admin_logout">Logout</a>
+    {% else %}
+    <script>
+        window.location.href = "/admin_login";
+    </script>
+    {% endif %}
+</body>
+</html>

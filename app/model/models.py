@@ -31,6 +31,6 @@ class Seller(BaseModel):
      
     
 class Admin(BaseModel):
-    name: str
+    username: str
     password: str
 
