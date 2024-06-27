@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import User
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
-from app.crud.user import get_user_mail
+from app.crud.user import get_user_mail,add_user
 from app.config.session import login_user, get_current_user,logout_user
 
 router = APIRouter()
@@ -32,3 +32,14 @@ def landing_page(request: Request):
     user = get_current_user(request)
     return templates.TemplateResponse("user_landing.html",{"request":request,"user":user})
 
+@router.post('/add_user', response_class=HTMLResponse)
+def user_register(request: Request, user: User = Form(...)):
+    ack = add_user(user)
+    if ack:
+        return templates.TemplateResponse("user_login.html", {"request": request,"message":"Your account created successfully"})
+    else:
+        return templates.TemplateResponse("user_register.html", {"request": request,"message":"Something went wrong"})
+
+@router.get('/add_user', response_class=HTMLResponse)
+def user_registration(request: Request):
+    return templates.TemplateResponse("user_register.html",{"request":request})
