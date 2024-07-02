@@ -10,14 +10,15 @@ class User(BaseModel):
     last_login: Optional[str] = None
     
 class Product(BaseModel):
-    name: str #basic model
-    images: str
+    name: str 
+    images: List[str]
     price: str
     base_feature: str
     stock: int
-    # description: str
-    # cat_id: str
-    # last_change: str 
+    description: str
+    cat_id: str
+    seller_id: str
+    last_change: str 
     
 class Category(BaseModel):
     name: str
