@@ -86,7 +86,7 @@
             <div class="col">
                 <a href="#" class="card shadow-sm p-3 mb-5 ">    
                     <div class="card-body">
-                        <img src= " {{ product.images }} " class="card-img-top" alt="...">
+                        <img src= "data:image/png;base64,{{ product.images[0] }} " class="card-img-top" alt="...">
                         <h5 id = "product_title" class="card-title text-left ">{{ product.name }}</h5>
                         <div class="product_data"> 
                             <p class="card-text"> {{ product.base_feature }}</p>

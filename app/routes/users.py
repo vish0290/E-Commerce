@@ -54,5 +54,6 @@ def landing_page(request: Request):
     user = get_current_user(request)
     categories = get_all_category()
     products = get_random_product()
+    print(f'************************************************products: {products}')
     return templates.TemplateResponse("user_landing.html",{"request":request,"user":user,"categories":categories,"products":products})
 

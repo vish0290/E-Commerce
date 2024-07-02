@@ -13,7 +13,8 @@ def list_user(users) -> list:
     return [user_serial(user) for user in users]
 
 def seller_serial(seller) -> dict:
-    return {    
+    return {
+        "id": str(seller["_id"]),    
         "name": seller['name'],
         "email": seller['email'],
         'password': seller['password'],
@@ -30,7 +31,8 @@ def admin_serial(admin) -> dict:
     }
     
 def category_serial(category) -> dict:
-    return {    
+    return {
+        "id": str(category["_id"]),    
         "name": category['name'],
         'description': category['description'],
         'image': category['image'],
@@ -41,16 +43,18 @@ def list_category(categories) -> list:
     return [category_serial(category) for category in categories]
 
 def product_serial(product) -> dict:
-    return {    
+    return {   
+        "id": str(product["_id"]),
         "name": product['name'],
         'images': product['images'],
         'price': product['price'],
         'base_feature': product['base_feature'],
-        'stock': product['stock']
-        # 'description': product['description'],
-        # 'stock': product['stock'],
-        # 'cat_id': product['cat_id'],
-        # 'last_change': product['last_change']
+        'stock': product['stock'],
+        'description': product['description'],
+        'stock': product['stock'],
+        'cat_id': product['cat_id'],
+        'seller_id': product['seller_id'],
+        'last_change': product['last_change']
     }
 
 def list_product(products) -> list:

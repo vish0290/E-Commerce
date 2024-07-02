@@ -5,7 +5,6 @@ from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.admin import get_admin_username
 from app.crud.category import add_new_category
-from app.crud.product import add_new_product
 from app.config.session import login_admin, get_current_admin,logout_admin
 import datetime
 
@@ -58,11 +57,4 @@ def add_category(name:str, description:str, image:str):
     else:
         return {'message':'something went wrong'}
     
-@router.post('/add_product')
-def add_product(name:str, images:str, price:str, base_feature:str, stock:int):
-    product = Product(name=name, images=images, price=price, base_feature=base_feature, stock=stock)
-    ack = add_new_product(product)
-    if ack:
-        return {'message':'product added successfully'}
-    else:
-        return {'message':'something went wrong'}
+

@@ -30,10 +30,23 @@ def get_product_cat(cat_id):
         return list_product(product_db.find(query))
     except:
         return None
+    
+def get_product_sell(seller_id):
+    query = {'seller_id':seller_id}
+    try:
+        return list_product(product_db.find(query))
+    except:
+        return None
 
 def get_random_product():
     try:
         return list_product(product_db.aggregate([{'$sample':{'size':12}}]))
+    except:
+        return None
+
+def get_random_product1():
+    try:
+        return product_serial(product_db.aggregate([{'$sample':{'size':1}}]))
     except:
         return None
 
@@ -46,9 +59,17 @@ def add_new_product(product: Product):
 
 def update_product(product: Product,product_id):
     query = {'_id':ObjectId(product_id)}
-    product_db.find_one_and_update(query,dict(product))
-
+    filter = {'$set':dict(product)}
+    ack = product_db.update_one(query,filter)
+    if ack.acknowledged:
+        return True
+    else:
+        return False
+    
 def del_product(product_id):
     query = {'_id':ObjectId(product_id)}
-    product_db.find_one_and_delete(query)
-    
+    ack = product_db.find_one_and_delete(query)
+    if ack.acknowledged:
+        return True
+    else:
+        return False
