@@ -68,7 +68,7 @@ def update_product(product: Product,product_id):
     
 def del_product(product_id):
     query = {'_id':ObjectId(product_id)}
-    ack = product_db.find_one_and_delete(query)
+    ack = product_db.delete_one(query)
     if ack.acknowledged:
         return True
     else:
