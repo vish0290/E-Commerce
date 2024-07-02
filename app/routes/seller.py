@@ -34,17 +34,22 @@ def user_logout(request: Request):
 
 @router.get('/seller_dashboard', response_class=HTMLResponse)
 def landing_page(request: Request):
-    seller = get_current_seller(request)
-    seller_info = get_seller_mail(seller)
-    products = get_product_sell(seller_info['id'])
-    return templates.TemplateResponse("seller_landing.html",{"request":request,"seller":seller,"seller_info":seller_info,"products":products})
-
+    try:
+        seller = get_current_seller(request)
+        seller_info = get_seller_mail(seller)
+        products = get_product_sell(seller_info['id'])
+        return templates.TemplateResponse("seller_landing.html",{"request":request,"seller":seller,"seller_info":seller_info,"products":products})
+    except:
+        return RedirectResponse(url='/seller_login')
+    
 @router.get('/seller_add_product', response_class=HTMLResponse)
 def addproductinfo(request: Request):
-    seller = get_current_seller(request)
-    categories = get_all_category()
-    return templates.TemplateResponse("seller_product.html",{'request':request,"seller":seller,"categories":categories})
-
+    try:
+        seller = get_current_seller(request)
+        categories = get_all_category()
+        return templates.TemplateResponse("seller_product.html",{'request':request,"seller":seller,"categories":categories})
+    except:
+        return RedirectResponse(url='/seller_login')
 
 @router.post('/seller_add_product', response_class=HTMLResponse)
 async def addproductinfpr(
@@ -84,12 +89,15 @@ async def addproductinfpr(
 
 @router.get('/seller_product/{product_id}', response_class=HTMLResponse)
 def product_info(request: Request, product_id:str):
-    seller = get_current_seller(request)
-    seller_info = get_seller_mail(seller)
-    product = get_product(product_id)
-    category = get_all_category()
-    return templates.TemplateResponse("seller_product_info.html",{'request':request,"seller":seller,"product":product,"categories":category})
-
+    try:
+        seller = get_current_seller(request)
+        seller_info = get_seller_mail(seller)
+        product = get_product(product_id)
+        category = get_all_category()
+        return templates.TemplateResponse("seller_product_info.html",{'request':request,"seller":seller,"product":product,"categories":category})
+    except:
+        return RedirectResponse(url='/seller_login')
+    
 @router.post('/seller_product_update/{product_id}', response_class=RedirectResponse)
 async def update_product_info(request: Request,product_id: str, name:str = Form(...), price:str = Form(...), base_feature:str = Form(...), stock:int = Form(...), description:str = Form(...), cat_id:str = Form(...), images: List[UploadFile] = File(...),existing_images: List[str] = Form(...)):
     seller = get_current_seller(request)
@@ -113,7 +121,6 @@ async def update_product_info(request: Request,product_id: str, name:str = Form(
         else:
             existing_images = existing_images[0].split(',')
             product['images'] = existing_images
-            print(f'existing images: {len(existing_images)}**************************')
         ack = update_product(product,product_id)
         if ack:
             return templates.TemplateResponse("seller_landing.html",{'request':request,"seller":seller,"seller_info":seller_info,"products":get_product_sell(seller_info['id']),'message':'success'})
