@@ -1,5 +1,5 @@
 from app.model.models import Product
-from app.config.database import product_db
+from app.config.database import product_db, category_db
 from app.schemas.schemas import list_product,product_serial
 from bson import ObjectId
 
@@ -73,3 +73,4 @@ def del_product(product_id):
         return True
     else:
         return False
+
