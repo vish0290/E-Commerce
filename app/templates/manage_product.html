@@ -81,7 +81,7 @@
     <!-- Navbar -->
     <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
-            <a href="/seller_dashboard" class="navbar-brand text-white">E-Store Seller Dashboard</a>
+            <a href="/admin_dashboard" class="navbar-brand text-white">E-Store Admin Dashboard</a>
             <div class="d-flex ms-auto">
                 <li class="nav-item list-unstyled">
                     <a class="bi bi-box-arrow-right text-white" style="font-size: 1.5rem;" aria-current="page" href="/seller_logout"></a>
@@ -93,14 +93,14 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="text-center mb-4">
-        </div>
-        <a href="#"> Manage user</a>
-        <a href="#"> Order Logs</a>
-        <a href="#"> Manage Category</a>
-        <a href="#"> Manage Products</a>
-        <a href="#"> Manage Sellers</a>
-    </div>
 
+        </div>
+        <a href="/manage_user"> Manage user</a>
+        <a href="/order_logs"> Order Logs</a>
+        <a href="/manage_category"> Manage Category</a>
+        <a href="/manage_product"> Manage Products</a>
+        <a href="/manage_seller"> Manage Sellers</a>
+    </div>
     <!-- Content -->
     <h1 id="user_title" class="mb-4 text-center">Manage product</h1>
     <div class="content">
@@ -120,30 +120,16 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for item in data %}
                     <tr>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        <td>sanj</td>
-                        <td>john</td>
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.category }}</td>
+                        <td>{{ item.seller }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price }}</td>
                         <td><i class="bi bi-trash"></i></td>
                     </tr>
-                    <tr>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        <td>sanj</td>
-                        <td>john</td>
-                        <td><i class="bi bi-trash"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td>money</td>
-                        <td>money</td>
-                        <td><i class="bi bi-trash"></i></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

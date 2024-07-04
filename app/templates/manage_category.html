@@ -80,7 +80,7 @@
     <!-- Navbar -->
     <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
-            <a href="/seller_dashboard" class="navbar-brand text-white">E-Store Seller Dashboard</a>
+            <a href="/admin_dashboard" class="navbar-brand text-white">E-Store Admin Dashboard</a>
             <div class="d-flex ms-auto">
                 <li class="nav-item list-unstyled">
                     <a class="bi bi-box-arrow-right text-white" style="font-size: 1.5rem;" aria-current="page" href="/seller_logout"></a>
@@ -89,17 +89,17 @@
         </div>
     </nav>
 
-       <!-- Sidebar -->
-       <div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar">
         <div class="text-center mb-4">
-        </div>
-        <a href="manage_user.html"> Manage user</a>
-        <a href="manage_product"> Order Logs</a>
-        <a href="manage_category.html"> Manage Category</a>
-        <a href="manage_product.html"> Manage Products</a>
-        <a href="manage_seller.html"> Manage Sellers</a>
-    </div>
 
+        </div>
+        <a href="/manage_user"> Manage user</a>
+        <a href="/order_logs"> Order Logs</a>
+        <a href="/manage_category"> Manage Category</a>
+        <a href="/manage_product"> Manage Products</a>
+        <a href="/manage_seller"> Manage Sellers</a>
+    </div>
     
     <h1 id="user_title" class="mb-4 text-center">Manage Category</h1>
     <div class="content">
@@ -109,35 +109,21 @@
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Date</th>
                         <th scope="col">Last update</th>
                         <th scope="col">Action</th>
-                        
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for category in categories %}
                     <tr>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        <td>date</td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description }}</td>
+                        <td>{{ category.last_change }}</td>
                         <td><i class="bi bi-trash"></i></td>
                     </tr>
-                    <tr>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        <td>sanj</td>
-                        <td><i class="bi bi-trash"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td>sanj</td>
-                        <td><i class="bi bi-trash"></i></td>
-                    </tr>
+                    {% endfor %}
+                    
                 </tbody>
             </table>
         </div>
