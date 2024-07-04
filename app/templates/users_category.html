@@ -17,11 +17,11 @@
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Category
                     </a>
-                    {% for cat in categories %}
                     <ul class="dropdown-menu">
+                        {% for cat in categories %}
                         <li><a class="dropdown-item" href="/user_category/{{cat.id}}">{{ cat.name }}</a></li>
+                        {% endfor %}
                     </ul>
-                    {% endfor %}
                 </li>
             
             <form class="d-flex mx-auto w-50" role="search">
