@@ -173,7 +173,11 @@
       <div class="col-md-6">
         <div>
           <p><strong>Status:</strong></p>
-          <p id="statusLabel" class="status-label status-in-stock">In Stock</p>
+          {% if product.stock > 0 %}
+                        <p id="in_stock"class="card-text">In Stock</p>
+                        {% else %}
+                        <p id="out_stock"class="card-text">Out of Stock</p>
+                        {% endif %}
         </div>
       </div>
     </div>
@@ -225,18 +229,7 @@
       quantityInput.value = newQuantity;
     }
 
-    function setStatusLabel(product) {
-      let statusLabel = document.getElementById('statusLabel');
-      if (product.in_stock > 0) {
-        statusLabel.textContent = 'In Stock';
-        statusLabel.classList.remove('status-out-stock');
-        statusLabel.classList.add('status-in-stock');
-      } else {
-        statusLabel.textContent = 'Out of Stock';
-        statusLabel.classList.remove('status-in-stock');
-        statusLabel.classList.add('status-out-stock');
-      }
-    }
+    
 
     // Example: Setting the status to 'out-stock'
     // setStatusLabel('out-stock');
