@@ -1,13 +1,14 @@
 from fastapi import APIRouter,Request,Form
 from fastapi.responses import HTMLResponse,RedirectResponse
-from app.model.models import User
+from app.model.models import User, Cart
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.user import get_user_mail,add_user
 from app.config.session import login_user, get_current_user,logout_user
 from app.crud.category import get_all_category,get_category,search_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product
-
+from app.crud.cart import add_product_cart
+from datetime import datetime
 
 router = APIRouter()
 templates =  Jinja2Templates(directory='app/templates')
@@ -88,3 +89,21 @@ def product_page(request: Request, prod_id: str):
     categories = get_all_category()
     product = get_product(prod_id)
     return templates.TemplateResponse("product_page.html",{"request":request,"user":user,"categories":categories,"product":product})
+
+@router.post('/user_cart', response_class=HTMLResponse)
+def cart_page(request: Request, product_id:str,quantity:int ):
+    user = get_current_user(request)
+    categories = get_all_category()
+
+    product_data = get_product(product_id)
+    seller_id = product_data['seller_id']
+    price = product_data['price']
+    total_price = price * quantity
+    last_change = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cart = Cart.objects(user_id=user['email'],product_id=product_id,seller_id=seller_id,quantity=quantity,price=price,total_price=total_price,last_change=last_change)
+    ack = add_product_cart(cart)
+    if ack:
+        flag = True
+    else:
+        flag = None
+    return templates.TemplateResponse("product_page.html",{"request":request,"user":user,"categories":categories,"product":product_data,"flag":flag})
