@@ -11,7 +11,7 @@
     
     <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
-            <a class="navbar-brand">E-Store</a>
+            <a href="/" class="navbar-brand">E-Store</a>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -24,8 +24,8 @@
                     </ul>
                 </li>
             
-            <form class="d-flex mx-auto w-50" role="search">
-                <input id = "search" name= "query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search" >
+            <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
+                <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
                 <button class="btn btn-outline-success search-icon" type="submit">
                     <i class="bi bi-search"></i>
                 </button>

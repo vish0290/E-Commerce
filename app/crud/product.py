@@ -1,6 +1,6 @@
 from app.model.models import Product
 from app.config.database import product_db, category_db
-from app.schemas.schemas import list_product,product_serial
+from app.schemas.schemas import list_product, product_serial
 from bson import ObjectId
 
 def get_product(product_id):
@@ -74,3 +74,11 @@ def del_product(product_id):
     else:
         return False
 
+def search_product(query):
+    try:
+        products = product_db.find({'name':{'$regex':query,"$options": "i"}})
+        return list_product(products)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+    
