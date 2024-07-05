@@ -11,21 +11,21 @@
     
     <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
-            <a class="navbar-brand">E-Store</a>
+            <a href="/" class="navbar-brand">E-Store</a>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Category
                     </a>
-                    {% for category in categories %}
                     <ul class="dropdown-menu">
+                        {% for category in categories %}
                         <li><a class="dropdown-item" href="/user_category/{{category.id}}">{{ category.name }}</a></li>
+                        {% endfor %}
                     </ul>
-                    {% endfor %}
                 </li>
             
-            <form class="d-flex mx-auto w-50" role="search">
-                <input id = "search" name= "query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search" >
+            <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
+                <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
                 <button class="btn btn-outline-success search-icon" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
@@ -84,7 +84,7 @@
         <div class="row row-cols-1 row-cols-md-4 g-4">
             {% for product in products %}
             <div class="col">
-                <a href="#" class="card shadow-sm p-3 mb-5 ">    
+                <a href="/user_product/{{product.id}}" class="card shadow-sm p-3 mb-5 ">    
                     <div class="card-body">
                         <img src= "data:image/png;base64,{{ product.images[0] }} " class="card-img-top" alt="...">
                         <h5 id = "product_title" class="card-title text-left ">{{ product.name }}</h5>

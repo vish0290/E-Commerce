@@ -38,3 +38,10 @@ def update_category(category: Category,category_id):
 def del_category(category_id):
     query = {'_id':ObjectId(category_id)}
     category_db.find_one_and_delete(query)
+
+def search_category(name):
+    query = {'name':{'$regex':name,'$options':'i'}}
+    try:
+        return list_category(category_db.find(query))
+    except:
+        return None

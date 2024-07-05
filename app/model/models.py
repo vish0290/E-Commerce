@@ -37,3 +37,20 @@ class Admin(BaseModel):
     username: str
     password: str
 
+class Cart(BaseModel):
+    user_id: str
+    product_id: str
+    seller_id: str
+    quantity: int
+    price: str
+    total_price: str
+    last_change: str
+    
+class Order(BaseModel):
+    user_id: str
+    product_id: str
+    seller_id: str
+    quantity: int
+    price: str
+    total_price: str
+    last_change: str
