@@ -84,7 +84,7 @@
         <div class="row row-cols-1 row-cols-md-4 g-4">
             {% for product in products %}
             <div class="col">
-                <a href="#" class="card shadow-sm p-3 mb-5 ">    
+                <a href="/user_product/{{product.id}}" class="card shadow-sm p-3 mb-5 ">    
                     <div class="card-body">
                         <img src= "data:image/png;base64,{{ product.images[0] }} " class="card-img-top" alt="...">
                         <h5 id = "product_title" class="card-title text-left ">{{ product.name }}</h5>
