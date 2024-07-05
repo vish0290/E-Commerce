@@ -1,5 +1,5 @@
-from fastapi import APIRouter,Request,Form
-from fastapi.responses import HTMLResponse,RedirectResponse
+from fastapi import APIRouter,Request,Form,Query
+from fastapi.responses import HTMLResponse,RedirectResponse,JSONResponse
 from app.model.models import User, Cart
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
@@ -90,20 +90,28 @@ def product_page(request: Request, prod_id: str):
     product = get_product(prod_id)
     return templates.TemplateResponse("product_page.html",{"request":request,"user":user,"categories":categories,"product":product})
 
-@router.post('/user_cart', response_class=HTMLResponse)
-def cart_page(request: Request, product_id:str,quantity:int ):
+@router.get('/add_to_cart', response_class=HTMLResponse)
+def cart_page(request: Request, product_id: str= Query(...), quantity: int = Query(...)):
     user = get_current_user(request)
     categories = get_all_category()
-
     product_data = get_product(product_id)
+    if quantity > product_data['stock']:
+        return JSONResponse(status_code=400, content={"success": False, "message": "Not enough stock available"})
+    user_data = get_user_mail(user)
     seller_id = product_data['seller_id']
     price = product_data['price']
     total_price = price * quantity
     last_change = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cart = Cart.objects(user_id=user['email'],product_id=product_id,seller_id=seller_id,quantity=quantity,price=price,total_price=total_price,last_change=last_change)
+    cart = Cart(
+        user_id=user_data['id'],
+        product_id=product_id,
+        seller_id=seller_id,
+        quantity=quantity,
+        price=price,
+        total_price=total_price,
+        last_change=last_change)
     ack = add_product_cart(cart)
     if ack:
-        flag = True
+         return JSONResponse(status_code=200, content={"success": True, "message": "Product added to cart successfully"})
     else:
-        flag = None
-    return templates.TemplateResponse("product_page.html",{"request":request,"user":user,"categories":categories,"product":product_data,"flag":flag})
+         return JSONResponse(status_code=400, content={"success": False, "message": "Something went wrong. Please try again later"})
