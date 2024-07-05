@@ -59,6 +59,9 @@
     <div class="container mt-5">
         <h3 class="text-left">Search Results for {{query}}</h3>
         <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% if not products %}
+                <h3 class="text-center">No products found</h3>
+            {% endif %}
             {% for product in products %}
             <div class="col">
                 <a href="#" class="card shadow-sm p-3 mb-5 ">    

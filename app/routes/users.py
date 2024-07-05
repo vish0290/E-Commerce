@@ -6,7 +6,7 @@ from bson import ObjectId
 from app.crud.user import get_user_mail,add_user
 from app.config.session import login_user, get_current_user,logout_user
 from app.crud.category import get_all_category,get_category,search_category
-from app.crud.product import get_product_cat, get_random_product, search_product
+from app.crud.product import get_product_cat, get_random_product, search_product,get_product
 
 
 router = APIRouter()
@@ -80,3 +80,11 @@ def search(request: Request, query: str):
     elif res_products == None and cat_list != None:
         res_products += cat_product
     return templates.TemplateResponse("search_page.html",{"request":request,"user":user,"categories":categories,"products":res_products,"query":query})
+
+#product page
+@router.get('/user_product/{prod_id}', response_class=HTMLResponse)
+def product_page(request: Request, prod_id: str):
+    user = get_current_user(request)
+    categories = get_all_category()
+    product = get_product(prod_id)
+    return templates.TemplateResponse("product_page.html",{"request":request,"user":user,"categories":categories,"product":product})
