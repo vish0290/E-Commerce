@@ -53,16 +53,17 @@ def add_new_cart(cart: Cart):
 def add_product_cart(cart: Cart):
     query = {'user_id':cart.user_id,'product_id':cart.product_id}
     try:
-        cart = cart_db.find_one(query)
-        cart['quantity'] = cart['quantity'] + 1
-        cart['total_price'] = str(float(cart['price']) * cart['quantity'])
-        ack = cart_db.update_one(query,{'$set':cart})
+        cart_ext = cart_db.find_one(query)
+        cart_ext['quantity'] = cart_ext['quantity'] + cart.quantity
+        cart_ext['total_price'] = str(float(cart_ext['price']) * cart_ext['quantity'])
+        cart_ext['last_change'] = cart.last_change
+        ack = cart_db.update_one(query,{'$set':cart_ext})
         if ack.acknowledged:
             return True
         else:
             return False
     except:
-        ack = cart_db.insert_one(dict(cart)) 
+        ack = cart_db.insert_one(cart.dict()) 
         if ack.acknowledged:
             return True
         else:
