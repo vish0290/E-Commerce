@@ -154,12 +154,15 @@
           </div>
           
           <div class="form-group">
-            {% for category in categories %}
-                {% if category.id == product.cat_id %}
-                    <label for="cat_id">Category: {{category.name}}</label>
-                {% endif %}
-            {% endfor %}
+            
+                
+              <label for="cat_id">Category: </label>
               <select id="cat_id" name="cat_id" required>
+                {% for category in categories %}
+                  {% if category.id == product.cat_id %}
+                    <option value={{category.id}} selected>{{category.name}}</option>
+                  {% endif %}
+                {% endfor %}
                 {% for category in categories %}
                     <option value={{category.id}}>{{category.name}}</option>
                 {% endfor %}
