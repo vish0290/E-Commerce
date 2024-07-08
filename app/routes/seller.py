@@ -89,14 +89,11 @@ async def addproductinfpr(
 
 @router.get('/seller_product/{product_id}', response_class=HTMLResponse)
 def product_info(request: Request, product_id:str):
-    try:
         seller = get_current_seller(request)
         seller_info = get_seller_mail(seller)
         product = get_product(product_id)
         category = get_all_category()
         return templates.TemplateResponse("seller_product_info.html",{'request':request,"seller":seller,"product":product,"categories":category})
-    except:
-        return RedirectResponse(url='/seller_login')
     
 @router.post('/seller_product_update/{product_id}', response_class=RedirectResponse)
 async def update_product_info(request: Request,product_id: str, name:str = Form(...), price:str = Form(...), base_feature:str = Form(...), stock:int = Form(...), description:str = Form(...), cat_id:str = Form(...), images: List[UploadFile] = File(...),existing_images: List[str] = Form(...)):
