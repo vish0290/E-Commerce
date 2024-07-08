@@ -114,7 +114,8 @@ def cart_page(request: Request, product_id: str= Query(...), quantity: int = Que
     if ack:
          return JSONResponse(status_code=200, content={"success": True, "message": "Product added to cart successfully"})
     else:
-         return JSONResponse(status_code=400, content={"success": False, "message": "Something went wrong. Please try again later"})
+         return JSONResponse(status_code=400, content={"success": False, "message": "Something went wrong. Please try again later"}) 
+       
 # 404_page_not_found
 
 @router.get("/{path:path}", response_class=HTMLResponse)
