@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Request,Form,Query
+from fastapi import APIRouter,Request,Form,Query,HTTPException
 from fastapi.responses import HTMLResponse,RedirectResponse,JSONResponse
 from app.model.models import User, Cart
 from fastapi.templating import Jinja2Templates
@@ -115,3 +115,9 @@ def cart_page(request: Request, product_id: str= Query(...), quantity: int = Que
          return JSONResponse(status_code=200, content={"success": True, "message": "Product added to cart successfully"})
     else:
          return JSONResponse(status_code=400, content={"success": False, "message": "Something went wrong. Please try again later"})
+# 404_page_not_found
+
+@router.get("/{path:path}", response_class=HTMLResponse)
+async def catch_all(request: Request, path: str):
+    return templates.TemplateResponse("error_page.html", {"request": request})
+
