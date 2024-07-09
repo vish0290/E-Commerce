@@ -9,7 +9,7 @@ from app.crud.category import get_all_category,get_category,search_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product
 from app.crud.cart import add_product_cart
 from datetime import datetime
-from app.config.util import encode_password, verify_password
+
 
 
 router = APIRouter()
@@ -23,7 +23,7 @@ def login_page(request: Request):
 @router.post('/user_login',response_class=RedirectResponse)
 def login(request: Request, email:str = Form(...), password:str = Form(...)):
     user = get_user_mail(email)
-    if user != None and  verify_password(user['password'],password):
+    if user != None and  user['password'] == password:
         login_user(request,str(user['email']))
         return RedirectResponse(url='/',status_code=302)
     return templates.TemplateResponse('user_login.html',{'request':request,"error":"invalid email or password"})
