@@ -103,3 +103,9 @@ def manage_seller(request: Request):
     admin = get_current_admin(request)
     sellers = get_all_seller()
     return templates.TemplateResponse('manage_seller.html',{'request':request,"admin":admin,"sellers":sellers})
+
+@router.get('/manage_produt_del/{Product_id}',response_class=HTMLResponse)
+def del_product(request:Request,product_id:str):
+    admin=get_current_admin(request)
+    del_product(product_id)
+    return RedirectResponse(url="/manage_product")
