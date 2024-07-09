@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Request,Form,Query,HTTPException
+from fastapi import APIRouter,Request,Form,Query,HTTPException, FastAPI
 from fastapi.responses import HTMLResponse,RedirectResponse,JSONResponse
 from app.model.models import User, Cart
 from fastapi.templating import Jinja2Templates
@@ -9,6 +9,8 @@ from app.crud.category import get_all_category,get_category,search_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product
 from app.crud.cart import add_product_cart
 from datetime import datetime
+from app.config.util import encode_password, verify_password
+
 
 router = APIRouter()
 templates =  Jinja2Templates(directory='app/templates')
@@ -21,7 +23,7 @@ def login_page(request: Request):
 @router.post('/user_login',response_class=RedirectResponse)
 def login(request: Request, email:str = Form(...), password:str = Form(...)):
     user = get_user_mail(email)
-    if user != None and user['password'] == password:
+    if user != None and  verify_password(user['password'],password):
         login_user(request,str(user['email']))
         return RedirectResponse(url='/',status_code=302)
     return templates.TemplateResponse('user_login.html',{'request':request,"error":"invalid email or password"})
@@ -38,6 +40,7 @@ def user_register(request: Request, name:str = Form(...), email: str=Form(...), 
     if item != None:
         return templates.TemplateResponse("user_register.html", {"request": request,"message":"User Already exist"})
     else:
+        password = encode_password(password)
         user = User(name=name,password=password,email=email)
         ack = add_user(user)
         if ack:
@@ -117,8 +120,7 @@ def cart_page(request: Request, product_id: str= Query(...), quantity: int = Que
          return JSONResponse(status_code=400, content={"success": False, "message": "Something went wrong. Please try again later"}) 
        
 # 404_page_not_found
-
-@router.get("/{path:path}", response_class=HTMLResponse)
-async def catch_all(request: Request, path: str):
+@router.get("/404", response_class=HTMLResponse)
+async def catch_all(request: Request):
     return templates.TemplateResponse("error_page.html", {"request": request})
 
