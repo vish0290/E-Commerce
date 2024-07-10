@@ -127,7 +127,15 @@
                         <td>{{ item.seller }}</td>
                         <td>{{ item.quantity }}</td>
                         <td>{{ item.price }}</td>
-                        <td><i class="bi bi-trash"></i></td>
+                        <td>
+    
+                        <form action="/manage_product_del/{{ item.id }}" method="get">
+                            <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                            
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

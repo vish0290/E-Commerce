@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.admin import get_admin_username
 from app.crud.category import add_new_category, get_all_category, get_category
-from app.crud.product import get_all_product
+from app.crud.product import get_all_product,del_product
 from app.crud.user import get_all_user
 from app.crud.seller import get_all_seller
 from app.config.session import login_admin, get_current_admin,logout_admin
@@ -90,6 +90,7 @@ def manage_product(request: Request):
     data = []
     for product in products:
         temp = {}
+        temp['id']=product['id']
         temp['product'] = product['name']
         temp['category'] = categories[product['cat_id']]
         temp['price'] = product['price']
@@ -103,3 +104,9 @@ def manage_seller(request: Request):
     admin = get_current_admin(request)
     sellers = get_all_seller()
     return templates.TemplateResponse('manage_seller.html',{'request':request,"admin":admin,"sellers":sellers})
+
+@router.get('/manage_product_del/{item_id}',response_class=HTMLResponse)
+def del_product_item(request:Request,item_id:str):
+    admin=get_current_admin(request)
+    del_product(item_id)
+    return RedirectResponse(url="/manage_product" )
