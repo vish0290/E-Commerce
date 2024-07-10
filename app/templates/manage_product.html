@@ -128,12 +128,13 @@
                         <td>{{ item.quantity }}</td>
                         <td>{{ item.price }}</td>
                         <td>
-                        </form>
-                        <form action="/manage_produt_del/{{ product.id }}" method="get">
+    
+                        <form action="/manage_product_del/{{ item.id }}" method="get">
                             <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                            
                         </td>
                     </tr>
                     {% endfor %}
