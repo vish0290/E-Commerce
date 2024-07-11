@@ -7,28 +7,36 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
+      table, td, th{
+        width: 100%;
+        background-color: lightgray;
+      }
       .left-container,
       .right-container{
         display: inline-block;
-        vertical-align: top;
       }
       .left-container{
         width: 70%;
         margin-top: auto;
+        vertical-align: top;
       }
       .right-container{
         width: 26%;
         background-color: lightgray;
-        padding: 40vw 0 1vw 1vw;
+        padding: 1vw 2vw 1vw 2vw;
         margin-top: 2vw;
         margin-left: 1vw;
+        height: 47vw;
       }
       .checkout-button{
+        position: absolute;
+        bottom: 40px;
         margin-top: 0.5vw;
-        margin-left: 1vw;
+        
         width: 300px;
         border: 3px solid black;
         padding: 10px;
+        vertical-align: bottom;
       }
       .product-list{
         
@@ -58,7 +66,24 @@
       #add,#subtract,#qty{
         display: inline-block;
       }
-      
+      .dropdown{
+        margin-left: 50px;
+        display: flex;
+        color: white;
+        justify-content: space-between;
+      }
+      .icon-white {
+        color: white;
+    }
+    .icon-large {
+        font-size: 1.5rem; /* Adjust the size as needed */
+    }
+    .card{
+      width: 60vw;
+      height: 10vw;
+      display: inline-block;
+    }
+  
     </style>
 
   <script>
@@ -75,7 +100,7 @@
       // Update the quantity text content
       quantityElement.textContent = quantity;
     }
-    
+
     function decreaseQuantity(button) {
       const quantityElement = button.parentElement.querySelector('#qty');
       let quantity = parseInt(quantityElement.textContent);
@@ -86,27 +111,49 @@
       }
       
       quantityElement.textContent = quantity;
-    }
+  
+
+
+        }
   </script>
 
 </head>
 <body>
-  
+  {% if user %}
   <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="navbar-brand">E-Store</a>
-    
-    <form class="d-flex mx-auto w-50" role="search">
-        <input id = "search" name= "query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search" >
-        <button class="btn btn-outline-success search-icon" type="submit">
-            <i class="bi bi-search"></i>
-        </button>
-    </form>
-    
-    
+        <a href="/" class="navbar-brand">E-Store</a>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Category
+                </a>
+                <ul class="dropdown-menu">
+                    {% for category in categories %}
+                    <li><a class="dropdown-item" href="/user_cart/{{category.id}}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        
+        <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
+            <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
+            <button class="btn btn-outline-success search-icon" type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+        
+        
         <div class="d-flex ms-auto">
+            {% if not user %}
                 <li class="nav-item">
-                    <a class="bi bi-cart icon-white icon-large me-2" aria-current="page" href="#"></a>
+                    <a class="btn btn-outline-success me-2" href="/add_user" role="button">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-success" href="/user_login" role="button">Sign In</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="bi bi-cart icon-white icon-large me-2" aria-current="page" href="/user_cart"></a>
                 </li>
                 <li class="nav-item">
                     <a class="bi bi-person-circle icon-white icon-large me-2" aria-current="page" href="#"></a>
@@ -121,86 +168,27 @@
 </nav>
 <div class="left-container">
   <p id="myorder">MY ORDER</p>
-  <div class="product-list">
-
-    <div class="product">
-      <div class="card mb-3 border-0" style="max-width:400px;"  >
-        <div class="row no-gutters">
-          <div class="col-md-6">
-            <img src="https://t.ly/najGN" class="card-img" alt="...">
-          </div>
-          <div class="col-md-5">
-            <div class="card-body">
-              <h5 class="card-title">IPhone15 </h5>
-              <p class="card-text">PRICE:</small></p>
-              <button id="add">+</button>
-              <p id="qty">0</p>
-              <button id="subtract">-</button>
-            </div>
-          </div>
+  <div class="product-list" style="padding: 1vw; margin-left: 2vw;">
+    {% for product in products %}
+    <div class="prod-container" style="border: 2px solid black; padding: 1vw; width: 64vw; display: inline-block; vertical-align: top; box-sizing: border-box; margin-top: 1vw;">
+      <div class="prod-image" style="border: 2px solid gray; padding: 1vw; width: 10vw; height: 10vw; display: inline-block; box-sizing: border-box; vertical-align: top;">
+        <img src= "data:image/png;base64,{{product.image}} " class="card-img-top" alt="..." style="padding: 1vw 1vw 1vw 1vw; max-width: 100%; max-height: 100%; object-fit: contain;">
+      </div>
+      <div class="prod-info" style="padding: 1vw; width: 44vw; height: 10vw; display: inline-block; box-sizing: border-box; vertical-align: top;">
+        <h5 id = "product_title" class="card-title text-left ">{{ product.name }}</h5>
+        <div class="product_data"> 
+            <p class="card-text"> {{ product.base_feature }}</p>
+            <p class="card-text" style="margin-bottom: 0.5vw;"> €{{ product.price }}</p>
         </div>
+        <button id="add">+</button>
+        <p id="qty">{{product.qty}}</p>
+        <button id="subtract">-</button>
+        
       </div>
     </div>
-
-    <div class="product">
-      <div class="card mb-3 border-0" style="max-width:400px;"  >
-        <div class="row no-gutters">
-          <div class="col-md-6">
-            <img src="https://t.ly/najGN" class="card-img" alt="...">
-          </div>
-          <div class="col-md-5">
-            <div class="card-body">
-              <h5 class="card-title">IPhone15 </h5>
-              <p class="card-text">PRICE:</small></p>
-              <button id="add">+</button>
-              <p id="qty">0</p>
-              <button id="subtract">-</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="product">
-      <div class="card mb-3 border-0" style="max-width:400px;"  >
-        <div class="row no-gutters">
-          <div class="col-md-6">
-            <img src="https://t.ly/najGN" class="card-img" alt="...">
-          </div>
-          <div class="col-md-5">
-            <div class="card-body">
-              <h5 class="card-title">IPhone15 </h5>
-              <p class="card-text">PRICE:</small></p>
-              <button id="add">+</button>
-              <p id="qty">0</p>
-              <button id="subtract">-</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="product">
-      <div class="card mb-3 border-0" style="max-width:400px;"  >
-        <div class="row no-gutters">
-          <div class="col-md-6">
-            <img src="https://t.ly/najGN" class="card-img" alt="...">
-          </div>
-          <div class="col-md-5">
-            <div class="card-body">
-              <h5 class="card-title">IPhone15 </h5>
-              <p class="card-text">PRICE:</small></p>
-              <button id="add">+</button>
-              <p id="qty">0</p>
-              <button id="subtract">-</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    {% endfor %}
   </div>
-      
+  
       <div class="continue-button" style="text-decoration: solid;">
         Continue Shopping
       </div>
@@ -208,10 +196,24 @@
 </div>
   
 <div class="right-container">
-  <div class="container-sm">Total:</div>
-  <button class="checkout-button">Proceed to Checkout</button>
+  {% for product in products %}
+  <table style="vertical-align: top;">
+    <tr>
+      <td>{{ product.name }} x {{product.qty}}</td>
+      <td>€{{ product.total_price }} </td>
+    </tr>
+  </table>
+  {% endfor %}
+  <div style="position: absolute;
+        bottom: 100px;">Total: €{{super_total}}</div>
+  
+  <button class="checkout-button" style="vertical-align: bottom;"><a style="color: black; text-decoration: none;" href="/order_confirmed">Proceed to Checkout</a></button>
 </div>
-        
+{% else %} 
+ <script>
+  window.location.href = "/404"
+ </script>
+ {%endif%}      
 </body>
 </html>
 
