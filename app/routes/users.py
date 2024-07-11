@@ -34,16 +34,16 @@ def user_logout(request: Request):
 
 #user registration        
 @router.post('/add_user', response_class=HTMLResponse)
-def user_register(request: Request, name:str = Form(...), email: str=Form(...), password: str=Form(...)):
+def user_register(request: Request, name:str = Form(...), email: str=Form(...), password: str=Form(...), address: str=Form(...)): 
     item = get_user_mail(email)
     if item != None:
         return templates.TemplateResponse("user_register.html", {"request": request,"message":"User Already exist"})
     else:
-        password = encode_password(password)
-        user = User(name=name,password=password,email=email)
+        
+        user = User(name=name,password=password,email=email,address=address)
         ack = add_user(user)
         if ack:
-            return RedirectResponse(url='/user_login', status_code=302)
+          return templates.TemplateResponse("user_register.html", {"request": request,"success":"User registered successfully"})
         else:
             return templates.TemplateResponse("user_register.html", {"request": request,"message":"Something went wrong"})
             
