@@ -121,7 +121,7 @@
                         <td>{{ category.description }}</td>
                         <td>{{ category.last_change }}</td>
                         <td>
-                            <form action="" method="get">
+                            <form action="/manage_category_del/{{category.id}}" method="get">
                                 <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
                                     <i class="bi bi-trash"></i>
                                 </button>

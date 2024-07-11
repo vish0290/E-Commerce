@@ -1,10 +1,11 @@
 from app.model.models import Category
-from app.config.database import category_db
+from app.config.database import category_db,product_db,order_db,cart_db
 from app.schemas.schemas import list_category,category_serial
 from bson import ObjectId
 
 def get_category(category_id):
-    query = {'_id':ObjectId(category_id)}
+    query = {'_id':ObjectId(category_id),'status':'active'}
+    
     try:
         category = category_serial(category_db.find_one(query))
     except:
@@ -12,7 +13,7 @@ def get_category(category_id):
     return category
 
 def get_category_name(name):
-    query = {'name':name}
+    query = {'name':name,'status':'active'}
     try:
         return category_serial(category_db.find_one(query))
     except:
@@ -20,7 +21,7 @@ def get_category_name(name):
     
 def get_all_category():
     try:
-        return list_category(category_db.find())
+        return list_category(category_db.find({'status':'active'}))
     except:
         return None
 
@@ -37,7 +38,17 @@ def update_category(category: Category,category_id):
     
 def del_category(category_id):
     query = {'_id':ObjectId(category_id)}
-    category_db.find_one_and_delete(query)
+    setdata = {'$set':{'status':'inactive'}}
+    category_db.update_one(query,setdata)
+    product_db.find_and_modify({'category_id':category_id},{'$set':{'status':'inactive'}})
+    order_db.find_and_modify({'category_id':category_id},{'$set':{'status':'inactive'}})
+    
+def restore_category(category_id):
+    query = {'_id':ObjectId(category_id)}
+    setdata = {'$set':{'status':'active'}}
+    category_db.update_one(query,setdata)
+    product_db.find_and_modify({'category_id':category_id},{'$set':{'status':'active'}})
+    order_db.find_and_modify({'category_id':category_id},{'$set':{'status':'active'}})
 
 def search_category(name):
     query = {'name':{'$regex':name,'$options':'i'}}

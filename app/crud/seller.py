@@ -4,7 +4,7 @@ from app.schemas.schemas import list_seller,seller_serial
 from bson import ObjectId
 
 def get_seller(seller_id):
-    query = {'_id':ObjectId(seller_id)}
+    query = {'_id':ObjectId(seller_id),'status':'active'}
     try:
         seller = seller_serial(seller_db.find_one(query))
     except:
@@ -12,7 +12,7 @@ def get_seller(seller_id):
     return seller
 
 def get_seller_mail(email):
-    query = {'email':email}
+    query = {'email':email,'status':'active'}
     try:
         return seller_serial(seller_db.find_one(query))
     except:
@@ -20,12 +20,12 @@ def get_seller_mail(email):
 
 def get_all_seller():
     try:
-        return list_seller(seller_db.find())
+        return list_seller(seller_db.find({'status':'active'}))
     except:
         return None
 
 def add_seller(seller: Seller):
-    ack = seller_db.insert_one(dict(seller)) 
+    ack = seller_db.insert_one(seller.dict()) 
     if ack.acknowledged:
         return True
     else:
@@ -37,4 +37,5 @@ def update_seller(seller: Seller,seller_id):
     
 def del_seller(seller_id):
     query = {'_id':ObjectId(seller_id)}
-    seller_db.find_one_and_delete(query)
+    setdata = {'$set':{'status':'inactive'}}
+    seller_db.update_one(query,setdata)

@@ -108,9 +108,10 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Name</th>
+                        <th scope="col">Customer Name</th>
+                        <th scope="col">Product</th>
                         <th scope="col">Category</th>
-                        <th scope="col">Seller</th>
+                        <th scope="col">Seller Name</th>
                         <th scope="col">Stock</th>
                         <th scope="col">Price</th>
                         <th scope="col">Action</th>
@@ -120,36 +121,24 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for order in orders %}
                     <tr>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>s
-                        <td>sanj</td>
-                        <td>john</td>
+                        <td>{{order.user}}</td>
+                        <td>{{order.product}}</td>
+                        <td>{{order.category}}</td>
+                        <td>{{order.seller}}</td>
+                        <td>{{order.quantity}}</td>
+                        <td>{{order.price}}</td>
                         <td>
-                            <form action="" method="get">
+                            <form action="/delete_order/{{order.id}}" method="get">
                                 <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
                         </td>
                     </tr>
-                    <tr>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        <td>sanj</td>
-                        <td>john</td>
-                        <td><i class="bi bi-trash"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td>money</td>
-                        <td>money</td>
-                        <td><i class="bi bi-trash"></i></td>
-                    </tr>
+                    {% endfor %}
+                    
                 </tbody>
             </table>
         </div>

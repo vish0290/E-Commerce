@@ -330,14 +330,14 @@
             <!-- Column 1, Row 4: Add to Cart Button with Label -->
             {% if user %}
             <div class="col-md-6">
-            <button onclick="addToCart()" class="btn btn-primary btn-lg btn-block"{% if product.stock == 0 %}disabled{% endif %}>Add to Cart</button>
+            <button onclick="handleCartAction('add_to_cart')" class="btn btn-primary btn-lg btn-block"{% if product.stock == 0 %}disabled{% endif %}>Add to Cart</button>
             </div>
           {% endif %}
 
             <!-- Column 2, Row 4: Buy Now Button with Label -->
             {% if user %}
             <div class="col-md-6">
-                <button class="btn btn-success btn-lg btn-block" {% if product.stock ==0 %}disabled{% endif %}>Buy Now</button>
+                <button onclick="handleCartAction('buy_now')" class="btn btn-success btn-lg btn-block" {% if product.stock ==0 %}disabled{% endif %}>Buy Now</button>
             </div>
             {% endif %}
 
@@ -353,12 +353,29 @@
             if (newQuantity < 1) {
                 newQuantity = 1;
             }
-            quantityInput.value = newQuantity;
+            fetch(`/stock_check?product_id=${"{{product.id}}"}&quantity=${newQuantity}`, {
+                method: 'GET',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {    
+                        alert(data.message);
+                        return;
+                    }
+                    else {
+                        quantityInput.value = newQuantity;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error updating the quantity.');
+                });
+            
         }
     </script>
     
     <script>
-        function addToCart() {
+        function handleCartAction(action) {
             const product_id = "{{ product.id }}";
             const quantityInput = document.getElementById('quantity');
             const quantity = quantityInput.value;
@@ -370,8 +387,13 @@
     }
 
     // Create the URL with query parameters
-    const url = `/add_to_cart?product_id=${product_id}&quantity=${parseInt(quantity)}`;
 
+    let url = '';
+    if (action === 'add_to_cart') {
+        url = `/add_to_cart?product_id=${product_id}&quantity=${parseInt(quantity)}`;
+    } else if (action === 'buy_now') {
+        url = `/buy_now?product_id=${product_id}&quantity=${parseInt(quantity)}`;
+    }
     // Send the GET request using Fetch API
     fetch(url, {
         method: 'GET',
@@ -380,6 +402,9 @@
     .then(data => {
         if (data.success) {
             alert(data.message);
+        }
+        else if (data.redirect) {
+            window.location.href = '/user_cart';
         } else {
             alert(data.message);
         }

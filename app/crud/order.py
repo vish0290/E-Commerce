@@ -6,13 +6,18 @@ from bson import ObjectId
 def get_order_user(user_id):
     query = {'user_id':user_id}
     try:
-        return list_order(order_db.find(query))
+        return order_serial(order_db.find_one(query,{'status':'active'}))
     except:
         return None
 
 def get_all_order():
     try:
-        return list_order(order_db.find())
+        return list_order(order_db.find({'status':'active'}))
     except:
         return None
+
+def del_order(order_id):
+    query = {'_id':ObjectId(order_id)}
+    setdata = {'$set':{'status':'inactive'}}
+    order_db.update_one(query,setdata)
     
