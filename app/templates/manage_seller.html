@@ -65,7 +65,7 @@
         }
 
         .table-container {
-            margin-top: 20px;
+            
             width: 100%;
             max-width: 800px; /* Adjust the max-width as needed */
         }
@@ -103,6 +103,11 @@
     </div>
     <!-- Content -->
     <h1 id="user_title" class="mb-4 text-center">Manage Sellers</h1>
+    <div class="container" >
+
+        <a href="/add_seller" class="btn btn-primary" style="float: right;">Add Seller</a>
+    </div>
+    
     <div class="content">
         <div class="table-container">
             <table class="table table-striped">
@@ -123,7 +128,7 @@
                         <td>{{ seller.name }}</td>
                         <td>{{ seller.email }}</td>
                         <td>
-                        <form action="" method="get">
+                        <form action="/delete_seller/{{seller.id}}" method="get">
                             <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
                                 <i class="bi bi-trash"></i>
                             </button>

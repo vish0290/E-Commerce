@@ -1,14 +1,16 @@
 from fastapi import APIRouter,Request,Form
 from fastapi.responses import HTMLResponse,RedirectResponse
-from app.model.models import Admin, Category, Product, User, Order
+from app.model.models import Admin, Category, Product, User, Order, Seller
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.admin import get_admin_username
-from app.crud.category import add_new_category, get_all_category, get_category
-from app.crud.product import get_all_product,del_product
-from app.crud.user import get_all_user
-from app.crud.seller import get_all_seller
+from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category
+from app.crud.product import get_all_product,del_product,get_product
+from app.crud.user import get_all_user, get_user, del_user
+from app.crud.seller import get_all_seller, get_seller_mail, add_seller, del_seller,get_seller
+from app.crud.order import get_all_order, del_order
 from app.config.session import login_admin, get_current_admin,logout_admin
+from app.config.cypher import verify_password
 import datetime
 
 router = APIRouter()
@@ -21,7 +23,7 @@ def login_page(request: Request):
 @router.post('/admin_login',response_class=HTMLResponse)
 def login(request: Request, username:str = Form(...), password:str = Form(...)):
     admin = get_admin_username(username)
-    if admin != None and admin['password'] == password:
+    if admin != None and verify_password(admin['password'],password):
         login_admin(request,str(admin['username']))
         return RedirectResponse(url='/admin_dashboard',status_code=302)
     return templates.TemplateResponse('admin_login.html',{'request':request,"error":"invalid username or password"})
@@ -51,9 +53,10 @@ def logout(request: Request):
 #     else:
 #         return templates.TemplateResponse("add_category.html", {"request": request,"message":"Something went wrong"})
 
+
 @router.post('/add_category')
 def add_category(name:str, description:str, image:str):
-    category = Category(name=name, description=description, image=image, last_change=str(datetime.datetime.now()))
+    category = Category(name=name, description=description, image=image, last_change=str(datetime.datetime.now()), status='active')
     ack = add_new_category(category)
     if ack:
         return {'message':'category added successfully'}
@@ -67,16 +70,60 @@ def manage_user(request: Request):
     users = get_all_user()
     return templates.TemplateResponse('manage_user.html',{'request':request,"admin":admin,"users":users})
 
+@router.get('/del_user/{user_id}',response_class=HTMLResponse)
+def delete_user_data(request:Request,user_id:str):
+    admin=get_current_admin(request)
+    del_user(user_id)
+    return RedirectResponse(url="/manage_user")
+                            
+                            
+
 @router.get('/order_logs',response_class=HTMLResponse)
 def order_logs(request: Request):
     admin = get_current_admin(request)
-    return templates.TemplateResponse('manage_order.html',{'request':request,"admin":admin})
+    orders_data = get_all_order()
+    orders = []
+    for item in orders_data:
+        order = {}
+        user_data = get_user(item['user_id'])
+        for product_id, quantity in item['product_data'].items():
+            product = get_product(product_id)
+            seller = get_seller(product['seller_id'])
+            order['id'] = item['id']
+            order['seller'] = seller['name']
+            order['product'] = product['name']
+            order['quantity'] = quantity
+            order['user'] = user_data['name']
+            order['category'] = get_category(product['cat_id'])['name']
+            order['price'] = int(product['price']) * quantity
+            orders.append(order)
+        
+    return templates.TemplateResponse('manage_order.html',{'request':request,"admin":admin,"orders":orders})
+
+@router.get('/delete_order/{order_id}',response_class=HTMLResponse)
+def delete_order_data(request:Request,order_id:str):
+    admin=get_current_admin(request)
+    del_order(order_id)
+    return RedirectResponse(url="/order_logs")
+
 
 @router.get('/manage_category',response_class=HTMLResponse)
 def manage_category(request: Request):
     admin = get_current_admin(request)
     categories = get_all_category()
     return templates.TemplateResponse('manage_category.html',{'request':request,"admin":admin,"categories":categories})
+
+@router.get('/manage_category_del/{item_id}',response_class=HTMLResponse)
+def del_category_item(request:Request,item_id:str):
+    admin=get_current_admin(request)
+    del_category(item_id)
+    return RedirectResponse(url="/manage_category" )
+
+@router.get('/restore_category/{item_id}',response_class=HTMLResponse)
+def restore_category_item(request:Request,item_id:str):
+    admin=get_current_admin(request)
+    restore_category(item_id)
+    return RedirectResponse(url="/manage_category" )
 
 @router.get('/manage_product',response_class=HTMLResponse)
 def manage_product(request: Request):
@@ -110,3 +157,28 @@ def del_product_item(request:Request,item_id:str):
     admin=get_current_admin(request)
     del_product(item_id)
     return RedirectResponse(url="/manage_product" )
+
+@router.get('/add_seller',response_class=HTMLResponse)
+def seller_register(request: Request):
+    admin = get_current_admin(request)
+    return templates.TemplateResponse('add_seller.html',{'request':request,"admin":admin})
+
+@router.post('/add_seller',response_class=HTMLResponse)
+def seller_register(request: Request, name:str = Form(...), email: str=Form(...), password: str=Form(...), number: int=Form(...)): 
+    admin = get_current_admin(request)
+    item = get_seller_mail(email)
+    if item != None:
+        return templates.TemplateResponse("add_seller.html", {"request": request,"message":"Seller Already exist"})
+    else:
+        seller = Seller(name=name,email=email,password=password,phone=number,status='active')
+        ack = add_seller(seller)
+        if ack:
+          return templates.TemplateResponse("add_seller.html", {"request": request,"admin":admin,"success":"Seller registered successfully"})
+        else:
+            return templates.TemplateResponse("add_seller.html", {"request": request,"admin":admin,"message":"Something went wrong"})
+
+@router.get('/delete_seller/{seller_id}',response_class=HTMLResponse)
+def delete_seller(request:Request,seller_id:str):
+    admin=get_current_admin(request)
+    del_seller(seller_id)
+    return RedirectResponse(url="/manage_seller" )

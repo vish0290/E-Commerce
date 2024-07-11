@@ -10,6 +10,7 @@ from app.crud.category import get_all_category, get_category_name
 from typing import List
 import base64
 from datetime import datetime
+from app.config.cypher import verify_password
 
 router = APIRouter()
 templates =  Jinja2Templates(directory='app/templates')
@@ -21,7 +22,7 @@ def login_page(request: Request):
 @router.post('/seller_login',response_class=HTMLResponse)
 def login(request: Request, email:str = Form(...), password:str = Form(...)):
     seller = get_seller_mail(email)
-    if seller != None and seller['password'] == password:
+    if seller != None and verify_password(seller['password'],password):
         login_seller(request,str(seller['email']))
         return RedirectResponse(url='/seller_dashboard',status_code=302)
     return templates.TemplateResponse('seller_login.html',{'request':request,"error":"invalid email or password"})

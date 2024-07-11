@@ -122,7 +122,7 @@
                         <td>{{user.last_login}}</td>
                         <td>{{user.address}}</td>
                         <td>
-                            <form action="" method="get">
+                            <form action="/del_user/{{user.id}}" method="get">
                                 <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
                                     <i class="bi bi-trash"></i>
                                 </button>

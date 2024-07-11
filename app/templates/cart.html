@@ -83,12 +83,24 @@
       height: 10vw;
       display: inline-block;
     }
-  
+    .status-label {
+      font-weight: bold;
+      margin-inline-end: 50px; /* Adjust spacing between label and status */
+      }
+      .status-in-stock {
+      color: green;
+      }
+
+.status-out-stock {
+    color: red;
+    
+}
     </style>
 
   <script>
     function increaseQuantity(button) {
       // Get the quantity element associated with the button
+      const productId = button.getAttribute('data-product-id');
       const quantityElement = button.parentElement.querySelector('#qty');
       
       // Parse the current quantity as a number (in case it starts as '0')
@@ -98,16 +110,61 @@
       quantity++;
       
       // Update the quantity text content
-      quantityElement.textContent = quantity;
+      
+      url = `/qty_update?product_id=${productId}&flag=${true}`;
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => response.json())
+        .then(
+          data => {
+            if (data.success == false) {
+              alert('Not Enough Stock Available!');
+              
+            }
+            else if(data.success == true){
+            
+            console.log('Success:', data);
+            window.location.reload();
+            }
+          }
+        )
+
+        .catch((error) => {
+          console.error('Error:', error);
+        })
+    
     }
 
     function decreaseQuantity(button) {
+      const productId = button.getAttribute('data-product-id');
       const quantityElement = button.parentElement.querySelector('#qty');
       let quantity = parseInt(quantityElement.textContent);
       
       // Ensure quantity doesn't go below zero
-      if (quantity > 0) {
+      if (quantity > 1) {
         quantity--;
+        url = `/qty_update?product_id=${productId}&flag=${false}`;
+        fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Success:', data);
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          })
+      }
+      else if (quantity == 0) {
+        remove_product(productId);
       }
       
       quantityElement.textContent = quantity;
@@ -115,6 +172,24 @@
 
 
         }
+    
+      function remove_product(product_id) {
+        url = `/remove_cart_item?product_id=${product_id}`;
+        fetch(url, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Success:', data);
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          })
+      }
   </script>
 
 </head>
@@ -124,16 +199,16 @@
     <div class="container-fluid">
         <a href="/" class="navbar-brand">E-Store</a>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Category
-                </a>
-                <ul class="dropdown-menu">
-                    {% for category in categories %}
-                    <li><a class="dropdown-item" href="/user_cart/{{category.id}}">{{ category.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Category
+          </a>
+          <ul class="dropdown-menu">
+              {% for category in categories %}
+              <li><a class="dropdown-item" href="/user_category/{{category.id}}">{{ category.name }}</a></li>
+              {% endfor %}
+          </ul>
+      </li>
         
         <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
             <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
@@ -179,18 +254,32 @@
         <div class="product_data"> 
             <p class="card-text"> {{ product.base_feature }}</p>
             <p class="card-text" style="margin-bottom: 0.5vw;"> €{{ product.price }}</p>
+            <div class="status">
+              <strong>Status: </strong>
+              <p id="status" class="status-label">
+                  {% if product.qty > 0 %}
+                  <span class="status-in-stock">In Stock</span>
+                  {% else %}
+                  <span class="status-out-stock">Out of Stock</span>
+                  {% endif %}
+              </p>
+          </div>
         </div>
-        <button id="add">+</button>
+        <button id="add" data-product-id = "{{product.id}}">+</button>
         <p id="qty">{{product.qty}}</p>
-        <button id="subtract">-</button>
-        
+        <button id="subtract" data-product-id = "{{product.id}}">-</button>
       </div>
+
+        <button onclick="remove_product('{{product.id}}')" class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
+            <i class="bi bi-trash"></i>
+        </button>
+    
     </div>
     {% endfor %}
   </div>
   
       <div class="continue-button" style="text-decoration: solid;">
-        Continue Shopping
+        <a href="/" style="color: black; text-decoration: none;">Continue Shopping</a>
       </div>
 
 </div>
@@ -205,9 +294,9 @@
   </table>
   {% endfor %}
   <div style="position: absolute;
-        bottom: 100px;">Total: €{{super_total}}</div>
+        bottom: 100px;">Total: € {{super_total}}</div>
   
-  <button class="checkout-button" style="vertical-align: bottom;"><a style="color: black; text-decoration: none;" href="/order_confirmed">Proceed to Checkout</a></button>
+  <button class="checkout-button" style="vertical-align: bottom;"><a style="color: black; text-decoration: none;" href="/order_confirmed" >Proceed to Checkout</a></button>
 </div>
 {% else %} 
  <script>

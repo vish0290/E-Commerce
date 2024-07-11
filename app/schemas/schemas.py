@@ -65,9 +65,7 @@ def order_serial(order) -> dict:
     return {    
         "id": str(order["_id"]),
         "user_id": order['user_id'],
-        'product_id': order['product_id'],
-        'seller_id': order['seller_id'],
-        'quantity': order['quantity'],
+        'product_data': order['product_data'],
         'total_price': order['total_price'],
         'last_change': order['last_change'],
     }
@@ -79,10 +77,7 @@ def cart_serial(cart) -> dict:
     return {    
         "id": str(cart["_id"]),
         "user_id": cart['user_id'],
-        'product_id': cart['product_id'],
-        'seller_id': cart['seller_id'],
-        'quantity': cart['quantity'],
-        'price': cart['price'],
+        'product_data': cart['product_data'],
         'total_price': cart['total_price'],
         'last_change': cart['last_change']
     }

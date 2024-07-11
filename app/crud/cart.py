@@ -2,79 +2,80 @@ from app.model.models import Cart
 from app.config.database import cart_db, order_db
 from app.schemas.schemas import cart_serial, list_cart
 from bson import ObjectId
+from app.crud.product import get_product, update_product_stock
+from datetime import datetime
 
 
 def get_cart_user(user_id):
     query = {'user_id':user_id}
     try:
-        return list_cart(cart_db.find(query))
+        return cart_serial(cart_db.find_one(query))
     except:
         return None
 
         
-def update_cart_quantity(cart_id,quantity):
-    query = {'_id':ObjectId(cart_id)}
-    cart = cart_db.find_one(query)
-    cart['quantity'] = quantity
-    cart['total_price'] = str(float(cart['price']) * quantity)
-    ack = cart_db.update_one(query,{'$set':cart})
-    if ack.acknowledged:
-        return True
-    else:
-        return False
-
-def delete_cart(cart_id):
-    query = {'_id':ObjectId(cart_id)}
-    ack = cart_db.delete_one(query)
-    if ack.acknowledged:
-        return True
-    else:
-        return False
-    
-def del_product_cart(product_id,cart_id):
-    query = {'_id':ObjectId(cart_id)}
-    cart = cart_db.find_one(query)
-    if cart['product_id'] == product_id:
-        ack = cart_db.delete_one(query)
-        if ack.acknowledged:
-            return True
-        else:
-            return False
-    return False
-    
-
-def add_new_cart(cart: Cart):
-    ack = cart_db.insert_one(dict(cart)) 
-    if ack.acknowledged:
-        return True
-    else:
-        return False
+def add_cart_product(user_id, product_id, quantity):
+    cart = cart_db.find_one({'user_id':user_id})
+    last_change = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    if cart == None:
+        last_change = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        product = get_product(product_id)
+        total_price = str(int(product['price']) * quantity)
+        cart = Cart(user_id=user_id, product_data={product_id:quantity}, total_price=total_price, last_change=last_change)
+        ack = cart_db.insert_one(cart.dict())
         
-def add_product_cart(cart: Cart):
-    query = {'user_id':cart.user_id,'product_id':cart.product_id}
-    try:
-        cart_ext = cart_db.find_one(query)
-        cart_ext['quantity'] = cart_ext['quantity'] + cart.quantity
-        cart_ext['total_price'] = str(float(cart_ext['price']) * cart_ext['quantity'])
-        cart_ext['last_change'] = cart.last_change
-        ack = cart_db.update_one(query,{'$set':cart_ext})
+    else:
+        cart = cart_serial(cart)
+        if product_id in cart['product_data'].keys():
+            
+            cart['product_data'][product_id] += quantity
+        else:
+            cart['product_data'][product_id] = quantity 
+        cart['last_change'] = last_change
+        cart['total_price'] = str(int(cart['total_price']) + int(get_product(product_id)['price']) * quantity)   
+        ack = cart_db.update_one({'user_id':user_id}, {'$set': {'product_data':cart['product_data'], 'last_change':cart['last_change'], 'total_price':cart['total_price']}})
+    if ack.acknowledged:
+        return True
+    else:
+        return False
+
+def update_cart_product(user_id, product_id, flag):
+    cart = cart_serial(cart_db.find_one({'user_id':user_id}))
+    if product_id in cart['product_data'].keys():
+        if flag:
+            product = get_product(product_id)
+            if product['stock'] <= cart['product_data'][product_id]:
+                return False
+            cart['product_data'][product_id] += 1
+        else:
+            cart['product_data'][product_id] -= 1
+            
+        cart['total_price'] = str(int(cart['total_price']) + int(get_product(product_id)['price']) * (1 if flag else -1))
+        ack = cart_db.update_one({'user_id':user_id}, {'$set': {'product_data':cart['product_data'], 'total_price':cart['total_price']}})
         if ack.acknowledged:
             return True
-        else:
-            return False
-    except:
-        ack = cart_db.insert_one(cart.dict()) 
-        if ack.acknowledged:
-            return True
-        else:
-            return False
     
-def cart_to_order(user_id):
-    query = {'user_id':user_id}
-    cart = list_cart(cart_db.find(query))
-    for c in cart:
-        ack = cart_db.delete_one({'_id':c['id']})
-        ack2 = order_db.insert_one(c)
-        if not ack.acknowledged:
-            return False
-    return True
+
+
+def remove_cart_product(user_id, product_id):
+    cart = cart_db.find_one({'user_id':user_id})
+    cart = cart_serial(cart)
+    if product_id in cart['product_data'].keys():
+        cart['total_price'] = str(int(cart['total_price']) - int(get_product(product_id)['price']) * cart['product_data'][product_id])
+        del cart['product_data'][product_id]
+        ack = cart_db.update_one({'user_id':user_id}, {'$set': {'product_data':cart['product_data'], 'total_price':cart['total_price']}})
+        if ack.acknowledged:
+            return True
+    return False
+
+def checkout_cart(user_id):
+    cart = cart_serial(cart_db.find_one({'user_id':user_id}))
+    order = {'user_id':user_id, 'product_data':cart['product_data'], 'total_price':cart['total_price'], 'order_date':datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 'last_change':datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 'status':'delivered'}
+    for product_id, qty in cart['product_data'].items():
+        product = get_product(product_id)
+        update_product_stock(product_id, product['stock'] - qty)
+    ack = order_db.insert_one(order)
+    if ack.acknowledged:
+        cart_db.delete_one({'user_id':user_id})
+        return True
+    return False

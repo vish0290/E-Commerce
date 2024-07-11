@@ -1,10 +1,10 @@
 from app.model.models import Product
-from app.config.database import product_db, category_db
+from app.config.database import product_db, category_db,order_db
 from app.schemas.schemas import list_product, product_serial
 from bson import ObjectId
 
 def get_product(product_id):
-    query = {'_id':ObjectId(product_id)}
+    query = {'_id':ObjectId(product_id),'status':'active'}
     try:
         product = product_serial(product_db.find_one(query))
     except:
@@ -12,7 +12,7 @@ def get_product(product_id):
     return product
 
 def get_product_name(name):
-    query = {'name':name}
+    query = {'name':name,'status':'active'}
     try:
         return product_serial(product_db.find_one(query))
     except:
@@ -20,19 +20,19 @@ def get_product_name(name):
     
 def get_all_product():
     try:
-        return list_product(product_db.find())
+        return list_product(product_db.find({'status':'active'}))
     except:
         return None
     
 def get_product_cat(cat_id):
-    query = {'cat_id':cat_id}
+    query = {'cat_id':cat_id,'status':'active'}
     try:
         return list_product(product_db.find(query))
     except:
         return None
     
 def get_product_sell(seller_id):
-    query = {'seller_id':seller_id}
+    query = {'seller_id':seller_id,'status':'active'}
     try:
         return list_product(product_db.find(query))
     except:
@@ -40,13 +40,13 @@ def get_product_sell(seller_id):
 
 def get_random_product():
     try:
-        return list_product(product_db.aggregate([{'$sample':{'size':12}}]))
+        return list_product(product_db.aggregate([{'$match': {'status': 'active'}},{'$sample':{'size':12}}]))
     except:
         return None
 
 def get_random_product1():
     try:
-        return product_serial(product_db.aggregate([{'$sample':{'size':1}}]))
+        return product_serial(product_db.aggregate([{'$match': {'status': 'active'}},{'$sample':{'size':1}}]))
     except:
         return None
 
@@ -66,9 +66,22 @@ def update_product(product: Product,product_id):
     else:
         return False
     
+def update_product_stock(product_id,stock):
+    query = {'_id':ObjectId(product_id)}
+    filter = {'$set':{'stock':stock}}
+    ack = product_db.update_one(query,filter)
+    if ack:
+        return True
+    else:
+        return False
+    
 def del_product(product_id):
     query = {'_id':ObjectId(product_id)}
-    ack = product_db.delete_one(query)
+    setdata = {'$set':{'status':'inactive'}}
+    ack = product_db.update_one(query,setdata)
+    query = {f'product_data.{product_id}': {'$exists': True}}
+    order_db.update_many(query,{'$set':{'status':'inactive'}})
+    
     if ack.acknowledged:
         return True
     else:
@@ -76,7 +89,7 @@ def del_product(product_id):
 
 def search_product(query):
     try:
-        products = product_db.find({'name':{'$regex':query,"$options": "i"}})
+        products = product_db.find({'name':{'$regex':query,"$options": "i"},'status':'active'})
         return list_product(products)
     except Exception as e:
         print(f"An error occurred: {e}")
