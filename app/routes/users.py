@@ -9,8 +9,7 @@ from app.crud.category import get_all_category,get_category,search_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product
 from app.crud.cart import add_product_cart
 from datetime import datetime
-
-
+from app.crud.cart import get_cart_user
 
 router = APIRouter()
 templates =  Jinja2Templates(directory='app/templates')
@@ -124,3 +123,33 @@ def cart_page(request: Request, product_id: str= Query(...), quantity: int = Que
 async def catch_all(request: Request):
     return templates.TemplateResponse("error_page.html", {"request": request})
 
+@router.get('/user_cart',response_class=HTMLResponse)
+def cart(request: Request):
+    user = get_current_user(request)
+    if user == None:
+        return RedirectResponse(url="/404")
+    user_data = get_user_mail(user)
+    categories = get_all_category()
+    cart_data = get_cart_user(user_data['id'])
+    products = []
+    for cart in cart_data:
+        temp_dict = {}
+        product = get_product(cart['product_id'])
+        temp_dict['image'] = product['images'][0]
+        temp_dict['name'] = product['name']
+        temp_dict['description'] = product['base_feature']
+        temp_dict['price'] = product['price']
+        temp_dict['qty'] = cart['quantity']
+        temp_dict['total_price'] = cart['total_price']
+        products.append(temp_dict)
+    super_total = 0
+    for i in products:
+        super_total += float(i['total_price'])
+    return templates.TemplateResponse("cart.html",{"request":request,"user":user,"categories":categories,"products":products,"super_total":super_total})
+
+@router.get('/order_confirmed', response_class=HTMLResponse)
+def order_confirmed(request: Request):
+    user = get_current_user(request)
+    categories = get_all_category()
+    products = get_random_product()
+    return templates.TemplateResponse("order-confirmed.html",{"request":request,"user":user,"categories":categories,"products":products})
