@@ -13,8 +13,11 @@
         <div class="row d-flex d-xl-flex justify-content-center justify-content-xl-center">
             <div class="col-sm-12 col-lg-10 col-xl-9 col-xxl-7 bg-white shadow-lg" style="border-radius: 5px;">
                 <div class="p-5">
-					<div></div>
+					<div>
+						<a href="/" class="bi-arrow-left-square-fill"></a>
+					</div>
                     <div class="text-center">
+						
                         <h4 class="text-dark mb-4">Create an Account!</h4>
                     </div>
 					{% if message %}
@@ -42,8 +45,9 @@
 
                         
 
-                        </div><button class="btn btn-primary d-block btn-user w-100" id="submitBtn" type="submit">Register Account</button>
-                        
+                        </div>
+						<button class="btn btn-primary d-block btn-user w-100" id="submitBtn" type="submit">Register Account</button>
+                        <a class="btn btn-primary d-block btn-user w-100" style="margin-top: 20px;" href="/" >Back</a>
                     </form>
                 </div>
 				<div class="card-footer text-left">
