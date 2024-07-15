@@ -9,7 +9,7 @@ from app.crud.category import get_all_category,get_category,search_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product,get_product_by_cat_id_sort
 from app.crud.cart import add_cart_product, get_cart_user, remove_cart_product, update_cart_product, checkout_cart
 from datetime import datetime
-from app.config.cypher import verify_password
+from app.config.cypher import verify_password,hash_password
 
 
 router = APIRouter()
@@ -41,7 +41,7 @@ def user_register(request: Request, name:str = Form(...), email: str=Form(...), 
     if item != None:
         return templates.TemplateResponse("user_register.html", {"request": request,"message":"User Already exist"})
     else:
-        
+        password = hash_password(password)
         user = User(name=name,password=password,email=email,address=address)
         ack = add_user(user)
         if ack:
@@ -194,3 +194,7 @@ def cat_sort_page(request: Request, cat_id: str, sort: str):
     products = get_product_by_cat_id_sort(cat_id,int(sort))
     category = get_category(cat_id)
     return templates.TemplateResponse("users_category.html",{'request':request,"user":user,"category":category,"categories":categories,"products":products})
+
+@router.get('/500')
+def server_error(request: Request):
+    return templates.TemplateResponse("500.html",{"request":request})
