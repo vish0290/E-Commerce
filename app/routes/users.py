@@ -3,11 +3,12 @@ from fastapi.responses import HTMLResponse,RedirectResponse,JSONResponse
 from app.model.models import User, Cart
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
-from app.crud.user import get_user_mail,add_user, update_last_login
+from app.crud.user import get_user_mail,add_user, update_last_login,update_user
 from app.config.session import login_user, get_current_user,logout_user
 from app.crud.category import get_all_category,get_category,search_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product,get_product_by_cat_id_sort
 from app.crud.cart import add_cart_product, get_cart_user, remove_cart_product, update_cart_product, checkout_cart
+from app.crud.order import get_order_user
 from datetime import datetime
 from app.config.cypher import verify_password,hash_password
 
@@ -198,3 +199,47 @@ def cat_sort_page(request: Request, cat_id: str, sort: str):
 @router.get('/500')
 def server_error(request: Request):
     return templates.TemplateResponse("500.html",{"request":request})
+
+@router.get('/user_profile', response_class=HTMLResponse)
+def user_profile(request: Request):
+    user = get_current_user(request)
+    user_data = get_user_mail(user)
+    categories = get_all_category()
+    orders = get_order_user(user_data['id'])
+    products = []
+    for i in orders:
+        temp = {}
+        temp['order_id'] = i['id']
+        temp['order_date'] = i['order_date']
+        for product_id, qty in i['product_data'].items():
+            product = get_product(product_id)
+            temp['name'] = product['name']
+            temp['base_feature'] = product['base_feature']
+            temp['images'] = product['images']
+            temp['price'] = product['price']
+            temp['stock'] = qty
+            temp['total_price'] = str(int(product['price']) * qty)
+            products.append(temp)
+    
+    return templates.TemplateResponse("user_profile.html",{"request":request,"user":user_data,"categories":categories,"products":products})
+
+@router.get('/user_edit_profile', response_class=HTMLResponse)
+def user_edit_profile(request: Request):
+    user = get_current_user(request)
+    user_data = get_user_mail(user)
+    categories = get_all_category()
+    return templates.TemplateResponse("edit_user.html",{"request":request,"user":user_data,"categories":categories})
+
+@router.post('/user_profile_update', response_class=RedirectResponse)
+def user_edit_profile(request: Request, name:str = Form(...), email: str=Form(...), address: str=Form(...)):
+    user = get_current_user(request)
+    user_data = get_user_mail(user)
+    categories = get_all_category()
+    user = User(name=name,email=email,address=address,password=user_data['password'],id=user_data['id'])
+    ack = update_user(user,user_data['id'])
+    if ack == False:
+        return templates.TemplateResponse("edit_user.html",{"request":request,"error":"Email already exist","user":user,"categories":categories})
+    elif ack == True:
+        return templates.TemplateResponse("edit_user.html",{"request":request,"success":"Profile updated successfully","user":user,"categories":categories})
+    else:
+        return templates.TemplateResponse("500.html",{"request":request})
