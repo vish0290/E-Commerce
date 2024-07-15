@@ -66,8 +66,10 @@ def order_serial(order) -> dict:
         "id": str(order["_id"]),
         "user_id": order['user_id'],
         'product_data': order['product_data'],
+        'order_date': order['order_date'],
         'total_price': order['total_price'],
         'last_change': order['last_change'],
+        'status': order['status']
     }
 
 def list_order(orders) -> list:

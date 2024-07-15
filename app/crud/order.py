@@ -4,9 +4,9 @@ from app.schemas.schemas import order_serial, list_order
 from bson import ObjectId
 
 def get_order_user(user_id):
-    query = {'user_id':user_id}
+    query = {'user_id':user_id, 'status':'active'}
     try:
-        return order_serial(order_db.find_one(query,{'status':'active'}))
+        return list_order(order_db.find(query).sort('order_date',-1))
     except:
         return None
 

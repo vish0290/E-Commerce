@@ -35,9 +35,19 @@ def add_user(user: User):
         return False 
                 
 def update_user(user: User,user_id):
-    query = {'_id':ObjectId(user_id)}
-    user_db.find_one_and_update(query,dict(user))
-
+    user = user.dict()
+    find_user = user_serial(user_db.find_one({'email':user['email']}))
+    if find_user != None:
+        if str(find_user['id']) != user_id:
+            return False
+        else:
+            query = {'_id':ObjectId(user_id)}
+            setdata = {'$set':user}
+            user_db.update_one(query,setdata)
+            return True
+        
+    
+    
 def del_user(user_id):
     query = {'_id':ObjectId(user_id)}
     setdata = {'$set':{'status':'inactive'}}

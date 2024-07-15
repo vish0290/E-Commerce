@@ -70,7 +70,7 @@ def remove_cart_product(user_id, product_id):
 
 def checkout_cart(user_id):
     cart = cart_serial(cart_db.find_one({'user_id':user_id}))
-    order = {'user_id':user_id, 'product_data':cart['product_data'], 'total_price':cart['total_price'], 'order_date':datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 'last_change':datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 'status':'delivered'}
+    order = {'user_id':user_id, 'product_data':cart['product_data'], 'total_price':cart['total_price'], 'order_date':datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 'last_change':datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 'status':'active'}
     for product_id, qty in cart['product_data'].items():
         product = get_product(product_id)
         update_product_stock(product_id, product['stock'] - qty)
