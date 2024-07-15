@@ -15,3 +15,7 @@ app.include_router(admin_routes)
 @app.exception_handler(404)
 def not_found(request, exc):
     return RedirectResponse(url='/404')
+
+@app.exception_handler(500)
+def server_error(request, exc):
+    return RedirectResponse(url='/500')

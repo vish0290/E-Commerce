@@ -145,7 +145,7 @@
               <label for="cat_id">Category:</label>
               <select id="cat_id" name="cat_id" required>
                 {% for category in categories %}
-                <option value={{category.name}}>{{category.name}}</option>
+                <option value={{category.id}}>{{category.name}}</option>
                 {% endfor %}
               </select>
           </div>
