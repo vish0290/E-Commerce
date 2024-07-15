@@ -6,7 +6,7 @@ from bson import ObjectId
 from app.crud.user import get_user_mail,add_user, update_last_login
 from app.config.session import login_user, get_current_user,logout_user
 from app.crud.category import get_all_category,get_category,search_category
-from app.crud.product import get_product_cat, get_random_product, search_product,get_product
+from app.crud.product import get_product_cat, get_random_product, search_product,get_product,get_product_by_cat_id_sort
 from app.crud.cart import add_cart_product, get_cart_user, remove_cart_product, update_cart_product, checkout_cart
 from datetime import datetime
 from app.config.cypher import verify_password
@@ -187,3 +187,10 @@ def stock_check(request: Request, product_id: str = Query(...), quantity: int = 
     if quantity > product['stock']:
         return JSONResponse(status_code=400, content={"success": False, "message": "Not enough stock available"})
     return JSONResponse(status_code=200, content={"success": True, "message": "Stock available"})
+@router.get('/sort_category/{cat_id}/{sort}')
+def cat_sort_page(request: Request, cat_id: str, sort: str):
+    user = get_current_user(request)
+    categories = get_all_category()
+    products = get_product_by_cat_id_sort(cat_id,int(sort))
+    category = get_category(cat_id)
+    return templates.TemplateResponse("users_category.html",{'request':request,"user":user,"category":category,"categories":categories,"products":products})
