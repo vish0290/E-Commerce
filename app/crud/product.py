@@ -94,4 +94,10 @@ def search_product(query):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+def get_product_by_cat_id_sort(cat_id,sort):
+    query = {'cat_id':cat_id,'status':'active'}
+    try:
+        return list_product(product_db.find(query).sort('price',sort))
+    except:
+        return None
     
