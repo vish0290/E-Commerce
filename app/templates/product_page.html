@@ -259,9 +259,8 @@
                 <div class="product-details">
                     <h1 class="product-title">{{ product.name }}</h1>
                     <div class="product-info">
-                        <h3>Price</h3>
-                        <p>{{ product.price }}</p>
-                        <h3>Description</h3>
+                        <h3><p><strong>Price: </strong><span>$ {{ product.price }}</span></p></h3>
+                        <h3>Description:</h3>
                         <p>{{ product.description }}</p>
                     </div>
                 </div>
@@ -320,26 +319,15 @@
               </div>
           </div>
 
-            <!-- Column 2, Row 3: Blank Space for Button Alignment -->
-            <div class="col-md-6">
-                <!-- No content here -->
+            <!-- Column 2, Row 3: add to cart/buy for Button Alignment -->
+            <div class="col-md-3">
+                {% if user %}
+                    <button onclick="handleCartAction('add_to_cart')" class="btn btn-primary btn-lg me-2" {% if product.stock == 0 %}disabled{% endif %}>Add to Cart</button>
+                    <button onclick="handleCartAction('buy_now')" class="btn btn-success btn-lg" {% if product.stock == 0 %}disabled{% endif %}>Buy Now</button>
+                {% endif %}
             </div>
-        </div>
-
-        <div class="row mt-5">
-            <!-- Column 1, Row 4: Add to Cart Button with Label -->
-            {% if user %}
-            <div class="col-md-6">
-            <button onclick="handleCartAction('add_to_cart')" class="btn btn-primary btn-lg btn-block"{% if product.stock == 0 %}disabled{% endif %}>Add to Cart</button>
-            </div>
-          {% endif %}
-
-            <!-- Column 2, Row 4: Buy Now Button with Label -->
-            {% if user %}
-            <div class="col-md-6">
-                <button onclick="handleCartAction('buy_now')" class="btn btn-success btn-lg btn-block" {% if product.stock ==0 %}disabled{% endif %}>Buy Now</button>
-            </div>
-            {% endif %}
+        </div> 
+    </div>
 
     <script>
         function changeImage(src) {
