@@ -10,7 +10,7 @@ from app.crud.user import get_all_user, get_user, del_user
 from app.crud.seller import get_all_seller, get_seller_mail, add_seller, del_seller,get_seller
 from app.crud.order import get_all_order, del_order
 from app.config.session import login_admin, get_current_admin,logout_admin
-from app.config.cypher import verify_password
+from app.config.cypher import verify_password,hash_password
 import datetime
 
 router = APIRouter()
@@ -170,6 +170,7 @@ def seller_register(request: Request, name:str = Form(...), email: str=Form(...)
     if item != None:
         return templates.TemplateResponse("add_seller.html", {"request": request,"message":"Seller Already exist"})
     else:
+        password = hash_password(password)
         seller = Seller(name=name,email=email,password=password,phone=number,status='active')
         ack = add_seller(seller)
         if ack:
