@@ -18,14 +18,14 @@
                         Category
                     </a>
                     <ul class="dropdown-menu">
-                        {% for cat in categories %}
-                        <li><a class="dropdown-item" href="/user_category/{{cat.id}}">{{ cat.name }}</a></li>
+                        {% for category in categories %}
+                        <li><a class="dropdown-item" href="/user_category/{{category.id}}">{{ category.name }}</a></li>
                         {% endfor %}
                     </ul>
                 </li>
             
-            <form class="d-flex mx-auto w-50" role="search">
-                <input id = "search" name= "query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search" >
+            <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
+                <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
                 <button class="btn btn-outline-success search-icon" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
@@ -42,10 +42,10 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="bi bi-cart icon-white icon-large me-2" aria-current="page" href="#"></a>
+                        <a class="bi bi-cart icon-white icon-large me-2" aria-current="page" href="/user_cart"></a>
                     </li>
                     <li class="nav-item">
-                        <a class="bi bi-person-circle icon-white icon-large me-2" aria-current="page" href="#"></a>
+                        <a class="bi bi-person-circle icon-white icon-large me-2" aria-current="page" href="/user_profile"></a>
                     </li>
                     <li class="nav-item">
                         <a class="bi bi-box-arrow-left icon-white icon-large me-2" aria-current="page" href="/user_logout"></a>
@@ -55,7 +55,6 @@
             </div>
         </div>
     </nav>
-
     <div class="container">
         <h1>{{category.name}}</h1>
         <h2>{{category.description}}</h2>
