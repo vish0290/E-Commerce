@@ -103,6 +103,19 @@
               <input type="text" id="name" name="name" value="{{product['name']}}" required />
             </div>
             
+            <div class="form-group">
+              <label for="cat_id">Category: </label>
+              <select id="cat_id" name="cat_id" required>
+                {% for category in categories %}
+                  {% if category.id == product.cat_id %}
+                    <option value={{category.id}} selected>{{category.name}}</option>
+                  {% endif %}
+                {% endfor %}
+                {% for category in categories %}
+                    <option value={{category.id}}>{{category.name}}</option>
+                {% endfor %}
+              </select>
+          </div>
 
           <div class="form-group">
               <label for="images">Product Images:</label>
@@ -114,16 +127,6 @@
                 onchange="previewImages()"
                 value="{{product.images}}"
             />
-              <button class="btn btn-secondary" onclick="removeAllImages()">Clear All Images</button>
-              
-              <script>
-              function removeAllImages() {
-                  var preview = document.getElementById("image-preview");
-                  preview.innerHTML = "";
-                  var filesInput = document.getElementById("images");
-                  filesInput.value = "";
-              }
-              </script>
               <input type="hidden" id="existing-images" name="existing_images" value="{{ product.images | join(',') }}">
               <div id="image-preview" class="image-preview"></div>
           </div>
@@ -153,22 +156,6 @@
               >{{product.description}}</textarea>
           </div>
           
-          <div class="form-group">
-            
-                
-              <label for="cat_id">Category: </label>
-              <select id="cat_id" name="cat_id" required>
-                {% for category in categories %}
-                  {% if category.id == product.cat_id %}
-                    <option value={{category.id}} selected>{{category.name}}</option>
-                  {% endif %}
-                {% endfor %}
-                {% for category in categories %}
-                    <option value={{category.id}}>{{category.name}}</option>
-                {% endfor %}
-              </select>
-          </div>
-
           <script>
             
         
@@ -211,7 +198,8 @@
                 removeButton.classList.add('remove-image');
                 removeButton.textContent = 'Remove';
                 removeButton.onclick = function() {
-                    preview.removeChild(imageContainer);
+                  removeExistingImage(image);
+                  preview.removeChild(imageContainer);
                 };
 
                 imageContainer.appendChild(img);
@@ -220,6 +208,15 @@
             }
         });
     }
+
+    
+    function removeExistingImage(image) {
+        var existingImages = document.getElementById('existing-images').value.split(',');
+        var index = existingImages.indexOf(image);
+        if (index > -1) {
+            existingImages.splice(index, 1);
+            document.getElementById('existing-images').value = existingImages.join(',');
+        }}
       function previewImages() {
           var preview = document.getElementById("image-preview");
           preview.innerHTML = "";

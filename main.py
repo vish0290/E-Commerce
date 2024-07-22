@@ -19,3 +19,11 @@ def not_found(request, exc):
 @app.exception_handler(500)
 def server_error(request, exc):
     return RedirectResponse(url='/500')
+
+@app.middleware("http")
+async def set_cache_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response

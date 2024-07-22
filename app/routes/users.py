@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Request,Form,Query,HTTPException, FastAPI
+from fastapi import APIRouter,Request,Form,Query,HTTPException, FastAPI, Response
 from fastapi.responses import HTMLResponse,RedirectResponse,JSONResponse
 from app.model.models import User, Cart
 from fastapi.templating import Jinja2Templates
@@ -31,8 +31,10 @@ def login(request: Request, email:str = Form(...), password:str = Form(...)):
     return templates.TemplateResponse('user_login.html',{'request':request,"error":"invalid email or password"})
 
 @router.get('/user_logout',response_class=RedirectResponse)
-def user_logout(request: Request):
+def user_logout(request: Request, response: Response):
     logout_user(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
     return RedirectResponse(url='/')
 
 #user registration        
@@ -201,8 +203,10 @@ def server_error(request: Request):
     return templates.TemplateResponse("500.html",{"request":request})
 
 @router.get('/user_profile', response_class=HTMLResponse)
-def user_profile(request: Request):
+def user_profile(request: Request, response: Response):
     user = get_current_user(request)
+    if user is None:
+        return RedirectResponse(url="/user_login")
     user_data = get_user_mail(user)
     categories = get_all_category()
     orders = get_order_user(user_data['id'])
@@ -221,14 +225,15 @@ def user_profile(request: Request):
             temp['total_price'] = str(int(product['price']) * qty)
             products.append(temp)
     
-    return templates.TemplateResponse("user_profile.html",{"request":request,"user":user_data,"categories":categories,"products":products})
+        response.headers["Cache-Control"] = "no-cache, no-store"
+    return templates.TemplateResponse("user_profile.html",{"request":request,"user":user,"user_data":user_data,"categories":categories,"products":products})
 
 @router.get('/user_edit_profile', response_class=HTMLResponse)
 def user_edit_profile(request: Request):
     user = get_current_user(request)
     user_data = get_user_mail(user)
     categories = get_all_category()
-    return templates.TemplateResponse("edit_user.html",{"request":request,"user":user_data,"categories":categories})
+    return templates.TemplateResponse("edit_user.html",{"request":request,"user":user,"user_data":user_data,"categories":categories})
 
 @router.post('/user_profile_update', response_class=RedirectResponse)
 def user_edit_profile(request: Request, name:str = Form(...), email: str=Form(...), address: str=Form(...)):
@@ -243,3 +248,4 @@ def user_edit_profile(request: Request, name:str = Form(...), email: str=Form(..
         return templates.TemplateResponse("edit_user.html",{"request":request,"success":"Profile updated successfully","user":user,"categories":categories})
     else:
         return templates.TemplateResponse("500.html",{"request":request})
+    
