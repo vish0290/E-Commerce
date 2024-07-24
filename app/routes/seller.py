@@ -1,16 +1,16 @@
-from fastapi import APIRouter,Request,Form, File, UploadFile
+from fastapi import APIRouter,Request,Form, File, UploadFile, Query
 from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import Seller, Product
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.seller import get_seller_mail, add_seller, get_seller, update_seller 
-from app.config.session import login_seller, get_current_seller,logout_seller
-from app.crud.product import get_product_sell, add_new_product, get_product, del_product, update_product
+from app.config.session import login_seller, get_current_seller,logout_seller,get_temp_seller
+from app.crud.product import get_product_sell, add_new_product, get_product, del_product, update_product,search_product_by_name_seller_id
 from app.crud.category import get_all_category, get_category_name
 from typing import List
 import base64
 from datetime import datetime
-from app.config.cypher import verify_password
+from app.config.cypher import verify_password,hash_password
 
 router = APIRouter()
 templates =  Jinja2Templates(directory='app/templates')
@@ -23,7 +23,7 @@ def login_page(request: Request):
 def login(request: Request, email:str = Form(...), password:str = Form(...)):
     seller = get_seller_mail(email)
     if seller != None and verify_password(seller['password'],password):
-        login_seller(request,str(seller['email']))
+        login_seller(request,str(seller['email']),'auth')
         return RedirectResponse(url='/seller_dashboard',status_code=302)
     return templates.TemplateResponse('seller_login.html',{'request':request,"error":"invalid email or password"})
 
@@ -145,13 +145,71 @@ def seller_update(request: Request):
 def seller_update(request: Request, name:str = Form(...), email: str=Form(...), phone: str=Form(...)):
     seller=get_current_seller(request)
     seller_data=get_seller_mail(seller)
-    seller=Seller(name=name,email=email,phone=phone)
+    seller=Seller(name=name,email=email,password=seller_data['password'], phone=phone)
     ack=update_seller(seller, seller_data['id'])
     if ack == False:
-        return templates.TemplateResponse("edit_seller_info.html",{"request":request,"error":"Email already exist","seller":seller})
+        return templates.TemplateResponse("edit_seller_info.html",{"request":request,"error":"Email already exist","seller":seller,"seller_info":seller_data})
     elif ack == True:
-        return templates.TemplateResponse("edit_seller_info.html",{"request":request,"success":"Profile updated successfully","seller":seller})
+        seller = get_current_seller(request)
+        seller_info = get_seller_mail(seller)
+        products = get_product_sell(seller_info['id'])
+        return templates.TemplateResponse("seller_landing.html",{"request":request,"seller":seller,"seller_info":seller_info,"products":products,"success":"profile updated successfully"})   
     else:
         return templates.TemplateResponse("500.html",{"request":request})
     
+@router.get('/search_product_seller', response_class=HTMLResponse)
+def search_product(request: Request, search:str = Query(...)):
+    seller = get_current_seller(request)
+    seller_info = get_seller_mail(seller)
+    products = search_product_by_name_seller_id(seller_info['id'],search)
+    return templates.TemplateResponse("seller_landing.html",{"request":request,"seller":seller,"seller_info":seller_info,"products":products})
+
+@router.get('/seller_fogot_password', response_class=HTMLResponse)
+def fogot_password(request: Request):
+    return templates.TemplateResponse("forgot_pass_main_seller.html",{'request':request,'role':'seller'})
+
+@router.get('/verfiy_seller_email', response_class=HTMLResponse)
+def verify_email(request: Request, email: str):
+    seller = get_seller_mail(email)
+    login_seller(request,str(email),'temp')
+    if seller == None:
+        return templates.TemplateResponse("forgot_pass_main_seller.html",{"request":request,"error":"Seller not found","role":"seller"})
+    return templates.TemplateResponse("forgot_pass_sec_seller.html",{"request":request,"seller":seller})
+
+@router.post('/seller_reset_pass')
+def reset_password(request: Request, email: str= Form(...), password: str = Form(...)):
+    temp_seller = get_temp_seller(request)
+    seller = get_seller_mail(temp_seller)
+    logout_seller(request)
+    if temp_seller != email:
+        return templates.TemplateResponse("forgot_pass_main_seller.html",{"request":request,"error":"Invalid email","seller":seller,"role":"seller"})
+    if seller == None:
+        return templates.TemplateResponse("forgot_pass_main_seller.html",{"request":request,"error":"User not found","seller":seller,"role":"seller"})
+    password = hash_password(password)
+    ack = update_seller(Seller(name=seller['name'],email=seller['email'],password=password,phone=seller['phone'],id=seller['id']),seller['id'])
+    if ack:
+        return templates.TemplateResponse("forgot_pass_main_seller.html",{"request":request,"success":"Password updated successfully","role":"seller","seller":seller})
+    else:
+        return templates.TemplateResponse("500.html",{"request":request})
     
+@router.get('/auth_pass_res_seller', response_class=HTMLResponse)
+def auth_pass_res(request: Request):
+    seller = get_current_seller(request)
+    if seller == None:
+        return RedirectResponse(url="/404")
+    seller = get_seller_mail(seller)
+    return templates.TemplateResponse("forgot_pass_auth_seller.html",{"request":request,"seller":seller})
+
+@router.post('/auth_pass_res_seller', response_class=RedirectResponse)
+def auth_pass_update(request: Request, current_password: str = Form(...), password: str = Form(...)):
+    seller = get_current_seller(request)
+    seller_data = get_seller_mail(seller)
+    password = hash_password(password)
+    if verify_password(seller_data['password'],current_password) == False:
+        return templates.TemplateResponse("forgot_pass_auth_seller.html",{"request":request,"message":"Invalid password","seller":seller_data})
+    ack=update_seller(Seller(name=seller_data['name'],email=seller_data['email'],password=password,phone=seller_data['phone'],id=seller_data['id']),seller_data['id'])
+    logout_seller(request)
+    if ack:
+        return templates.TemplateResponse("seller_login.html",{"request":request,"success":"Password updated successfully"})
+    else:
+        return templates.TemplateResponse("500.html",{"request":request})
