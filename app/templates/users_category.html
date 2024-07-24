@@ -13,7 +13,7 @@
         <div class="container-fluid">
             <a href="/" class="navbar-brand">E-Store</a>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Category
                     </a>
                     <ul class="dropdown-menu">
@@ -22,7 +22,6 @@
                         {% endfor %}
                     </ul>
                 </li>
-            
             <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
                 <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
                 <button class="btn btn-outline-success search-icon" type="submit">
@@ -54,7 +53,6 @@
             </div>
         </div>
     </nav>
-
     <div class="container">
         <h1>{{category.name}}</h1>
         <h2>{{category.description}}</h2>
@@ -94,11 +92,10 @@
     </div>
     
     <style>
-        
         .dropdown{
             margin-left: 50px;
             display: flex;
-            color: white;
+            color:white;
             justify-content: space-between;
         }
         .product_data{
@@ -153,7 +150,7 @@
             top: 100px; /* Move it higher to create more space */
         }
 
-        #dropdown-menu{
+        .dropdown-menu {
             padding: 1px;
             margin-left: 35px;
         }

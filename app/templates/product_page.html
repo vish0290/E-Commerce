@@ -190,6 +190,46 @@
         .icon-large {
             font-size: 1.5rem;
         }
+        .recommended-product-card .card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+}
+
+.recommended-product-card {
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.recommended-product-card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.recommended-product-card .card-title {
+    margin-top: 25px;
+    text-align: center;
+    color:#333
+}
+
+.recommended-product-card .product-info {
+    margin-top: auto;
+}
+
+.recommended-product-card .text-success {
+    color: green;
+}
+
+.recommended-product-card .text-danger {
+    color: red;
+}
     </style>
 </head>
 
@@ -208,7 +248,6 @@
                         {% endfor %}
                     </ul>
                 </li>
-            
             <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
                 <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
                 <button class="btn btn-outline-success search-icon" type="submit">
@@ -326,23 +365,23 @@
         </div> 
             <!-- Recommended Products Section -->
             <div class="container mt-5">
-                <h3 class="text-left">Recommendation</h3>
+                <h3 class="text-left">Recommendations</h3>
                 <div class="row row-cols-1 row-cols-md-4 g-4">
                     {% for product in recommended_products %}
                     <div class="col">
-                        <a href="/user_product/{{product.id}}" class="card shadow-sm p-3 mb-5 ">    
+                        <a href="/user_product/{{product.id}}" class="recommended-product-card shadow-sm p-3 mb-5">    
                             <div class="card-body">
-                                <img src= "data:image/png;base64,{{ product.images[0] }} " class="card-img-top" alt="...">
-                                <h5 id = "product_title" class="card-title text-left ">{{ product.name }}</h5>
-                                <div class="product_data"> 
-                                    <p class="card-text"> {{ product.base_feature }}</p>
-                                    <p class="card-text"> €{{ product.price }}</p>
-                                </div>
-                                {% if product.stock > 0 %}
-                                <p id="in_stock"class="card-text">In Stock</p>
-                                {% else %}
-                                <p id="out_stock"class="card-text">Out of Stock</p>
-                                {% endif %}
+                                <img src="data:image/png;base64,{{ product.images[0] }}" class="card-img-top" alt="Product Image">
+                                <h5 class="card-title text-left">{{ product.name }}</h5>
+                            <div class="product-info"> 
+                                <p class="card-text">{{ product.base_feature }}</p>
+                                <p class="card-text">€{{ product.price }}</p>
+                            </div>
+                            {% if product.stock > 0 %}
+                            <p class="card-text text-success">In Stock</p>
+                            {% else %}
+                            <p class="card-text text-danger">Out of Stock</p>
+                            {% endif %}
                             </div>               
                         </a>
                     </div>
