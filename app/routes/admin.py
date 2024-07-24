@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Request,Form
+from fastapi import APIRouter,Request,Form,Query
 from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import Admin, Category, Product, User, Order, Seller
 from fastapi.templating import Jinja2Templates
@@ -6,7 +6,7 @@ from bson import ObjectId
 from app.crud.admin import get_admin_username
 from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category
 from app.crud.product import get_all_product,del_product,get_product
-from app.crud.user import get_all_user, get_user, del_user
+from app.crud.user import get_all_user, get_user, del_user,search_users_by_name
 from app.crud.seller import get_all_seller, get_seller_mail, add_seller, del_seller,get_seller
 from app.crud.order import get_all_order, del_order
 from app.config.session import login_admin, get_current_admin,logout_admin
@@ -183,3 +183,10 @@ def delete_seller(request:Request,seller_id:str):
     admin=get_current_admin(request)
     del_seller(seller_id)
     return RedirectResponse(url="/manage_seller" )
+
+
+@router.get('/search_user',response_class=HTMLResponse)
+def search_user(request: Request, query:str=Query(...)):
+    admin = get_current_admin(request)
+    users =  search_users_by_name(query)
+    return templates.TemplateResponse('manage_user.html',{'request':request,"admin":admin,"users":users})
