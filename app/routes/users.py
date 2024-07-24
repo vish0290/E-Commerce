@@ -6,7 +6,7 @@ from bson import ObjectId
 from app.crud.user import get_user_mail,add_user, update_last_login,update_user
 from app.config.session import login_user, get_current_user,logout_user
 from app.crud.category import get_all_category,get_category,search_category
-from app.crud.product import get_product_cat, get_random_product, search_product,get_product,get_product_by_cat_id_sort
+from app.crud.product import get_product_cat, get_random_product, search_product,get_product,get_product_by_cat_id_sort,get_recommended_products
 from app.crud.cart import add_cart_product, get_cart_user, remove_cart_product, update_cart_product, checkout_cart
 from app.crud.order import get_order_user
 from datetime import datetime
@@ -95,7 +95,8 @@ def product_page(request: Request, prod_id: str):
     user = get_current_user(request)
     categories = get_all_category()
     product = get_product(prod_id)
-    return templates.TemplateResponse("product_page.html",{"request":request,"user":user,"categories":categories,"product":product})
+    recommended_products = get_recommended_products(product['cat_id'],prod_id)
+    return templates.TemplateResponse("product_page.html",{"request":request,"user":user,"categories":categories,"product":product,"recommended_products":recommended_products})
 
 @router.get('/add_to_cart', response_class=HTMLResponse)
 def cart_page(request: Request, product_id: str= Query(...), quantity: int = Query(...)):
@@ -248,4 +249,3 @@ def user_edit_profile(request: Request, name:str = Form(...), email: str=Form(..
         return templates.TemplateResponse("edit_user.html",{"request":request,"success":"Profile updated successfully","user":user,"categories":categories})
     else:
         return templates.TemplateResponse("500.html",{"request":request})
-    
