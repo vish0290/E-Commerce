@@ -16,216 +16,189 @@
     />
 
     <style>
-
-        #search{
-            width: 100%;
-            border-radius: 30px;
-        }
-        .dropdown{
-            margin-left: 50px;
-            display: flex;
-            color: white;
-            justify-content: space-between;
-        }
-      .container {
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 20px;
+      #search {
+        width: 100%;
+        border-radius: 30px;
       }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    input[type="text"],
-    input[type="number"],
-    textarea,
-    select,
-    input[type="file"] {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-    }
-  
-    .button {
-      padding: 10px 15px;
-      color: white;
-      cursor: pointer;
-      margin-bottom: 15px;
-    }
-
-    .image-preview {
-      display: flex;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-    .image-preview .image-container {
-      position: relative;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-    .image-preview img {
-      max-width: 100px;
-      max-height: 100px;
-    }
-    .remove-image {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      border: none;
-      cursor: pointer;
-      padding: 2px 5px;
-    }
-  </style>
-
+      .dropdown {
+        margin-left: 50px;
+        display: flex;
+        color: white;
+        justify-content: space-between;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="text"],
+      input[type="number"],
+      textarea,
+      select,
+      input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+      .button {
+        padding: 10px 15px;
+        color: white;
+        cursor: pointer;
+        margin-bottom: 15px;
+      }
+      .image-preview {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .image-preview .image-container {
+        position: relative;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      .image-preview img {
+        max-width: 100px;
+        max-height: 100px;
+      }
+      .remove-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 2px 5px;
+      }
+    </style>
   </head>
   <body>
     {% if user %}
     <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a href="/" class="navbar-brand">E-Store</a>
+      <div class="container-fluid">
+        <a href="/" class="navbar-brand">E-Store</a>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Category
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% for category in categories %}
-                        <li><a class="dropdown-item" href="/user_category/{{category.id}}">{{ category.name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </li>
-            
-            <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
-                <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
-                <button class="btn btn-outline-success search-icon" type="submit">
-                    <i class="bi bi-search"></i>
-                </button>
-            </form>
-            
-            
-            <div class="d-flex ms-auto">
-                    <li class="nav-item">
-                        <a class="bi bi-cart icon-white icon-large me-2" aria-current="page" href="/user_cart"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="bi bi-person-circle icon-white icon-large me-2" aria-current="page" href="/user_profile"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="bi bi-box-arrow-left icon-white icon-large me-2" aria-current="page" href="/user_logout"></a>
-                    </li>
-                    
-            </div>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Category
+          </a>
+          <ul class="dropdown-menu">
+            {% for category in categories %}
+            <li><a class="dropdown-item" href="/user_category/{{category.id}}">{{ category.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+
+        <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
+          <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
+          <button class="btn btn-outline-success search-icon" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+
+        <div class="d-flex ms-auto">
+          <li class="nav-item">
+            <a class="bi bi-cart icon-white icon-large me-2" aria-current="page" href="/user_cart"></a>
+          </li>
+          <li class="nav-item">
+            <a class="bi bi-person-circle icon-white icon-large me-2" aria-current="page" href="/user_profile"></a>
+          </li>
+          <li class="nav-item">
+            <a class="bi bi-box-arrow-left icon-white icon-large me-2" aria-current="page" href="/user_logout"></a>
+          </li>
         </div>
+      </div>
     </nav>
 
     <div class="container" style="position:absolute; left:0; right:0; top: 50%; transform: translateY(-50%); -ms-transform: translateY(-50%); -moz-transform: translateY(-50%); -webkit-transform: translateY(-50%); -o-transform: translateY(-50%);">
-        <div class="row d-flex d-xl-flex justify-content-center justify-content-xl-center">
-            <div class="col-sm-12 col-lg-10 col-xl-9 col-xxl-7 bg-white shadow-lg" style="border-radius: 5px;">
-                <div class="p-5">
-					<div>
-                        <a
-                        class="bi btn-secondary bi-arrow-left-circle-fill icon-black icon-large me-2"
-                        aria-current="page"
-                        href="/user_profile"
-                        style="float: left;"
-                      ></a>
-                    </div>
-                    <div class="text-center">
-                        
-                        <h4 class="text-dark mb-4">Edit Profile</h4>
-                    </div>
-					{% if message %}
-					<div class="alert alert-danger" role="alert">
-						{{message}}
-					  </div>
-					{% endif %}
-					{% if success %}
-
-					<div class="alert alert-success" role="alert">
-						{{success}}
-					  </div>
-					{% endif %}
-
-                    <form class="user" method="POST" action="/user_profile_update">
-                        <div class="mb-3" ><input class="form-control form-control-user" type="text" id ="name"name = "name" placeholder="Name" required="" value="{{user.name}}"></div>
-                        <div class="mb-3"><input class="form-control form-control-user" type="email" id="email" name ="email" placeholder="Email Address" required=""value="{{user.email}}"></div>
-                        <div class="mb-3">
-                           <textarea class="form-control form-control-user" name="address" id="address" required="">{{user.address}}</textarea>
-                        </div>
-						
-                        <div class="row mb-3">
-                            <p id="emailErrorMsg" class="text-danger" style="display:none;">Paragraph</p>
-                            <p id="passwordErrorMsg" class="text-danger" style="display:none;">Paragraph</p>
-                        </div>
-                        <button class="btn btn-secondary d-block btn-user w-100" id="submitBtn" type="submit">Update</button>
-                        
-                    </form>
-                </div>
+      <div class="row d-flex d-xl-flex justify-content-center justify-content-xl-center">
+        <div class="col-sm-12 col-lg-10 col-xl-9 col-xxl-7 bg-white shadow-lg" style="border-radius: 5px;">
+          <div class="p-5">
+            <div>
+              <a class="bi btn-secondary bi-arrow-left-circle-fill icon-black icon-large me-2" aria-current="page" href="/user_profile" style="float: left;"></a>
             </div>
-        </div>
-    
+            <div class="text-center">
+              <h4 class="text-dark mb-4">Edit Profile</h4>
+            </div>
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+              {{error}}
+            </div>
+            {% endif %}
+            {% if success %}
+            <div class="alert alert-success" role="alert">
+              {{success}}
+            </div>
+            {% endif %}
 
+            <form class="user" method="POST" action="/user_profile_update">
+              <div class="mb-3">
+                <input class="form-control form-control-user" type="text" id="name" name="name" placeholder="Name" required="" value="{{user_data.name}}">
+              </div>
+              <div class="mb-3">
+                <input class="form-control form-control-user" type="email" id="email" name="email" placeholder="Email Address" required="" value="{{user_data.email}}">
+              </div>
+              <div class="mb-3">
+                <textarea class="form-control form-control-user" name="address" id="address" required="">{{user_data.address}}</textarea>
+              </div>
+
+              <div class="row mb-3">
+                <p id="emailErrorMsg" class="text-danger" style="display:none;">Paragraph</p>
+                <p id="passwordErrorMsg" class="text-danger" style="display:none;">Paragraph</p>
+              </div>
+              <button class="btn btn-secondary d-block btn-user w-100" id="submitBtn" type="submit">Update</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
     <script>
-            let email = document.getElementById("email")
-            let password = document.getElementById("password")
-            let number = document.getElementById("number")
-            let verifyPassword = document.getElementById("verifyPassword")
-            let submitBtn = document.getElementById("submitBtn")
-            let emailErrorMsg = document.getElementById('emailErrorMsg')
-            let passwordErrorMsg = document.getElementById('passwordErrorMsg')
-        
-            function displayErrorMsg(type, msg) {
-                if(type == "email") {
-                    emailErrorMsg.style.display = "block"
-                    emailErrorMsg.innerHTML = msg
-                    submitBtn.disabled = true
-                }
-                else {
-                    passwordErrorMsg.style.display = "block"
-                    passwordErrorMsg.innerHTML = msg
-                    submitBtn.disabled = true
-                }
-            }
-        
-            function hideErrorMsg(type) {
-                if(type == "email") {
-                    emailErrorMsg.style.display = "none"
-                    emailErrorMsg.innerHTML = ""
-                    submitBtn.disabled = true
-                    if(passwordErrorMsg.innerHTML == "")
-                        submitBtn.disabled = false
-                }
-                else {
-                    passwordErrorMsg.style.display = "none"
-                    passwordErrorMsg.innerHTML = ""
-                    if(emailErrorMsg.innerHTML == "")
-                        submitBtn.disabled = false
-                }
-            }
-            
-            // Validate email upon change
-            email.addEventListener("change", function() {
-                // Check if the email is valid using a regular expression (string@string.string)
-                if(email.value.match(/^[^@]+@[^@]+\.[^@]+$/))
-                    hideErrorMsg("email")
-                else
-                    displayErrorMsg("email", "Invalid email")
-            });
-            // Show success modal after form submission
-            document.getElementById('registrationForm').addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent the default form submission
-                // Here, you would typically handle the form submission with an AJAX request
-                // For this example, we'll just show the success modal
-                let successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-            });
-        </script>
+      let email = document.getElementById("email")
+      let submitBtn = document.getElementById("submitBtn")
+      let emailErrorMsg = document.getElementById('emailErrorMsg')
+      let passwordErrorMsg = document.getElementById('passwordErrorMsg')
+
+      function displayErrorMsg(type, msg) {
+        if (type == "email") {
+          emailErrorMsg.style.display = "block"
+          emailErrorMsg.innerHTML = msg
+          submitBtn.disabled = true
+        } else {
+          passwordErrorMsg.style.display = "block"
+          passwordErrorMsg.innerHTML = msg
+          submitBtn.disabled = true
+        }
+      }
+
+      function hideErrorMsg(type) {
+        if (type == "email") {
+          emailErrorMsg.style.display = "none"
+          emailErrorMsg.innerHTML = ""
+          if (passwordErrorMsg.innerHTML === "")
+            submitBtn.disabled = false
+        } else {
+          passwordErrorMsg.style.display = "none"
+          passwordErrorMsg.innerHTML = ""
+          if (emailErrorMsg.innerHTML === "")
+            submitBtn.disabled = false
+        }
+      }
+
+      // Validate email upon change
+      email.addEventListener("input", function() {
+        if (email.value.match(/^[^@]+@[^@]+\.[^@]+$/))
+          hideErrorMsg("email")
+        else
+          displayErrorMsg("email", "Invalid email")
+      });
+    </script>
     {% else %}
     <script>
       window.location.href = "/user_login";
@@ -256,7 +229,7 @@
         color: white;
       }
       .icon-black {
-          color: #6c757d;
+        color: #6c757d;
       }
       .icon-large {
         font-size: 1.5rem;
@@ -267,9 +240,6 @@
       }
     </style>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

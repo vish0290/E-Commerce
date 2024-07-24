@@ -4,7 +4,7 @@ from app.model.models import User, Cart
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.user import get_user_mail,add_user, update_last_login,update_user
-from app.config.session import login_user, get_current_user,logout_user
+from app.config.session import login_user, get_current_user,logout_user,get_temp_user
 from app.crud.category import get_all_category,get_category,search_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product,get_product_by_cat_id_sort,get_recommended_products
 from app.crud.cart import add_cart_product, get_cart_user, remove_cart_product, update_cart_product, checkout_cart
@@ -18,14 +18,17 @@ templates =  Jinja2Templates(directory='app/templates')
 
 #user login and logout
 @router.get('/user_login',response_class= HTMLResponse)
-def login_page(request: Request):
-    return templates.TemplateResponse("user_login.html",{'request':request})
+def login_page(request: Request, response: Response):
+    logout_user(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    return templates.TemplateResponse("user_login.html",{'request':request,'response':response})
 
 @router.post('/user_login',response_class=RedirectResponse)
 def login(request: Request, email:str = Form(...), password:str = Form(...)):
     user = get_user_mail(email)
     if user != None and  verify_password(user['password'],password):
-        login_user(request,str(user['email']))
+        login_user(request,str(user['email']),'auth')
         update_last_login(user['id'])
         return RedirectResponse(url='/',status_code=302)
     return templates.TemplateResponse('user_login.html',{'request':request,"error":"invalid email or password"})
@@ -244,8 +247,58 @@ def user_edit_profile(request: Request, name:str = Form(...), email: str=Form(..
     user = User(name=name,email=email,address=address,password=user_data['password'],id=user_data['id'])
     ack = update_user(user,user_data['id'])
     if ack == False:
-        return templates.TemplateResponse("edit_user.html",{"request":request,"error":"Email already exist","user":user,"categories":categories})
+        return templates.TemplateResponse("edit_user.html",{"request":request,"error":"Email already exist","user":user,"categories":categories,"user_data":user_data})
     elif ack == True:
-        return templates.TemplateResponse("edit_user.html",{"request":request,"success":"Profile updated successfully","user":user,"categories":categories})
+        return templates.TemplateResponse("edit_user.html",{"request":request,"success":"Profile updated successfully","user":user,"categories":categories,"user_data":get_user_mail(user)})
+    else:
+        return templates.TemplateResponse("500.html",{"request":request})
+@router.get('/user_forgot_password', response_class=HTMLResponse)
+def forgot_password(request: Request):
+    
+    return templates.TemplateResponse("forgot_pass_main.html",{"request":request,'role':'user'})
+
+@router.get('/verify_email', response_class=HTMLResponse)
+def verify_email(request: Request, email: str):
+    user = get_user_mail(email)
+    login_user(request,str(email),'temp')
+    if user == None:
+        return templates.TemplateResponse("forgot_pass_main.html",{"request":request,"error":"User not found"})
+    return templates.TemplateResponse("forgot_pass_sec.html",{"request":request,"user":user})
+
+@router.post('/user_reset_pass')
+def reset_password(request: Request, email: str= Form(...), password: str = Form(...)):
+    temp_user = get_temp_user(request)
+    user = get_user_mail(temp_user)
+    logout_user(request)
+    if temp_user != email:
+        return templates.TemplateResponse("forgot_pass_main.html",{"request":request,"error":"Invalid email","user":user})
+    if user == None:
+        return templates.TemplateResponse("forgot_pass_main.html",{"request":request,"error":"User not found"})
+    password = hash_password(password)
+    ack = update_user(User(name=user['name'],email=user['email'],password=password,address=user['address'],id=user['id']),user['id'])
+    if ack:
+        return templates.TemplateResponse("forgot_pass_main.html",{"request":request,"success":"Password updated successfully"})
+    else:
+        return templates.TemplateResponse("500.html",{"request":request})
+    
+@router.get('/auth_pass_res', response_class=HTMLResponse)
+def auth_pass_res(request: Request):
+    user = get_current_user(request)
+    if user == None:
+        return RedirectResponse(url="/404")
+    user = get_user_mail(user)
+    return templates.TemplateResponse("forgot_pass_auth.html",{"request":request,"user":user})
+
+@router.post('/auth_pass_res', response_class=RedirectResponse)
+def auth_pass_update(request: Request, current_password: str = Form(...), password: str = Form(...)):
+    user = get_current_user(request)
+    user_data = get_user_mail(user)
+    password = hash_password(password)
+    if verify_password(user_data['password'],current_password) == False:
+        return templates.TemplateResponse("forgot_pass_auth.html",{"request":request,"message":"Invalid password","user":user_data})
+    ack = update_user(User(name=user_data['name'],email=user_data['email'],password=password,address=user_data['address'],id=user_data['id']),user_data['id'])
+    logout_user(request)
+    if ack:
+        return templates.TemplateResponse("user_login.html",{"request":request,"message":"Password updated successfully"})
     else:
         return templates.TemplateResponse("500.html",{"request":request})

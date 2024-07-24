@@ -1,78 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: white;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 30px;
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .submit-btn {
-            display: block;
-            width: 50%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: green;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 20px auto 0 auto;
-            text-align: center;
-        }
-        .submit-btn:hover {
-            background-color: darkgreen;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Edit Seller Profile</h2>
-        <form action='/seller_edit' method="post">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Seller Info</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
 
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name">
+    <style>
+      #search {
+        width: 100%;
+        border-radius: 30px;
+      }
+      .dropdown {
+        margin-left: 50px;
+        display: flex;
+        color: white;
+        justify-content: space-between;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="text"],
+      input[type="number"],
+      textarea,
+      select,
+      input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+      .button {
+        padding: 10px 15px;
+        color: white;
+        cursor: pointer;
+        margin-bottom: 15px;
+      }
+      .image-preview {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .image-preview .image-container {
+        position: relative;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      .image-preview img {
+        max-width: 100px;
+        max-height: 100px;
+      }
+      .remove-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 2px 5px;
+      }
+    </style>
+  </head>
+  <body>
+    {% if seller_info %}
+    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a href="/seller_dashboard" class="navbar-brand">E-Store Seller Dashboard</a>
+            <div class="d-flex ms-auto">
+                <a class="bi bi-box-arrow-right icon-white icon-large me-2" aria-current="page" href="/seller_logout"></a>
             </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email">
+        </div>
+    </nav>
+    
+    <div class="container" style="position:absolute; left:0; right:0; top: 50%; transform: translateY(-50%); -ms-transform: translateY(-50%); -moz-transform: translateY(-50%); -webkit-transform: translateY(-50%); -o-transform: translateY(-50%);">
+      <div class="row d-flex d-xl-flex justify-content-center justify-content-xl-center">
+        <div class="col-sm-12 col-lg-10 col-xl-9 col-xxl-7 bg-white shadow-lg" style="border-radius: 5px;">
+          <div class="p-5">
+            <div>
+              <a class="bi btn-secondary bi-arrow-left-circle-fill icon-black icon-large me-2" aria-current="page" href="/seller_dashboard" style="float: left;"></a>
             </div>
-            <div class="form-group">
-                <label for="phone">Phone No:</label>
-                <input type="tel" id="phone" name="phone">
+            <div class="text-center">
+              <h4 class="text-dark mb-4">Edit Profile</h4>
             </div>
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+              {{error}}
+            </div>
+            {% endif %}
+            {% if success %}
+            <div class="alert alert-success" role="alert">
+              {{success}}
+            </div>
+            {% endif %}
+
+            <form class="user" method="POST" action="/seller_edit">
+              <div class="mb-3">
+                <input class="form-control form-control-user" type="text" id="name" name="name" placeholder="Name" required="" value="{{seller_info.name}}">
+              </div>
+              <div class="mb-3">
+                <input class="form-control form-control-user" type="email" id="email" name="email" placeholder="Email Address" required="" value="{{seller_info.email}}">
+              </div>
+              <div class="mb-3">
+                <input class="form-control form-control-user" type="phone" id="phone" name="phone" placeholder="Phone No" required="" value="{{seller_info.phone}}">
+              </div>
+             
+              <div class="row mb-3">
+                <p id="emailErrorMsg" class="text-danger" style="display:none;">Paragraph</p>
+                <p id="passwordErrorMsg" class="text-danger" style="display:none;">Paragraph</p>
+              </div>
+              <button class="btn btn-secondary d-block btn-user w-100" id="submitBtn" type="submit">Update</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
+    <script>
+      let email = document.getElementById("email")
+      let submitBtn = document.getElementById("submitBtn")
+      let emailErrorMsg = document.getElementById('emailErrorMsg')
+      let passwordErrorMsg = document.getElementById('passwordErrorMsg')
+
+      function displayErrorMsg(type, msg) {
+        if (type == "email") {
+          emailErrorMsg.style.display = "block"
+          emailErrorMsg.innerHTML = msg
+          submitBtn.disabled = true
+        } else {
+          passwordErrorMsg.style.display = "block"
+          passwordErrorMsg.innerHTML = msg
+          submitBtn.disabled = true
+        }
+      }
+
+      function hideErrorMsg(type) {
+        if (type == "email") {
+          emailErrorMsg.style.display = "none"
+          emailErrorMsg.innerHTML = ""
+          if (passwordErrorMsg.innerHTML === "")
+            submitBtn.disabled = false
+        } else {
+          passwordErrorMsg.style.display = "none"
+          passwordErrorMsg.innerHTML = ""
+          if (emailErrorMsg.innerHTML === "")
+            submitBtn.disabled = false
+        }
+      }
+
+      // Validate email upon change
+      email.addEventListener("input", function() {
+        if (email.value.match(/^[^@]+@[^@]+\.[^@]+$/))
+          hideErrorMsg("email")
+        else
+          displayErrorMsg("email", "Invalid email")
+      });
+    </script>
+    {% else %}
+    <script>
+      window.location.href = "/404";
+    </script>
+    {% endif %}
+
+    <style>
+      #product_option {
+        margin-top: 10px;
+      }
+      .stock_avail {
+        color: green;
+      }
+      .stock_unavail {
+        color: red;
+      }
+      .img-fluid {
+        width: 100%;
+        height: 10vw;
+        object-fit: contain;
+        padding: 10px;
+      }
+      #seller_name {
+        color: white;
+        margin-right: 50px;
+      }
+      .icon-white {
+        color: white;
+      }
+      .icon-black {
+        color: #6c757d;
+      }
+      .icon-large {
+        font-size: 1.5rem;
+      }
+      .card {
+        text-decoration: none;
+        border-radius: 10px;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

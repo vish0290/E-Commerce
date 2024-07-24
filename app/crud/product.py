@@ -100,6 +100,15 @@ def get_product_by_cat_id_sort(cat_id,sort):
         return list_product(product_db.find(query).sort('price',sort))
     except:
         return None
+
+def search_product_by_name_seller_id(seller_id,name):
+    query = {'seller_id':seller_id,'name':{'$regex':name,"$options": "i"},'status':'active'}
+    try:
+        products = product_db.find(query)
+        return list_product(products)
+    except:
+        return None
+    
 def get_recommended_products(category_id: str, current_product_id: str):
     all_products = get_product_cat(category_id)
     recommended_products = [prod for prod in all_products if prod['id'] != current_product_id]
