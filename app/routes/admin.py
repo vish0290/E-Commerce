@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.admin import get_admin_username
 from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category
-from app.crud.product import get_all_product,del_product,get_product
+from app.crud.product import get_all_product,del_product,get_product,search_product
 from app.crud.user import get_all_user, get_user, del_user,search_users_by_name
 from app.crud.seller import get_all_seller, get_seller_mail, add_seller, del_seller,get_seller
 from app.crud.order import get_all_order, del_order
@@ -190,3 +190,11 @@ def search_user(request: Request, query:str=Query(...)):
     admin = get_current_admin(request)
     users =  search_users_by_name(query)
     return templates.TemplateResponse('manage_user.html',{'request':request,"admin":admin,"users":users})
+
+@router.get('/search_product_name',response_class=HTMLResponse)
+def search_product_name(request:Request,query:str=Query(...)):
+    admin=get_current_admin(request)
+    products=search_product(query)
+    return templates.TemplateResponse('manage_product.html',{'request':request,'admin':admin,'products':products})
+
+
