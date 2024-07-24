@@ -87,7 +87,7 @@ def del_product(product_id):
     else:
         return False
 
-def search_product(query):
+def search_product(query:str):
     try:
         products = product_db.find({'name':{'$regex':query,"$options": "i"},'status':'active'})
         return list_product(products)

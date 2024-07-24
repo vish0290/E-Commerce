@@ -191,10 +191,23 @@ def search_user(request: Request, query:str=Query(...)):
     users =  search_users_by_name(query)
     return templates.TemplateResponse('manage_user.html',{'request':request,"admin":admin,"users":users})
 
-@router.get('/search_product_name',response_class=HTMLResponse)
-def search_product_name(request:Request,query:str=Query(...)):
-    admin=get_current_admin(request)
-    products=search_product(query)
-    return templates.TemplateResponse('manage_product.html',{'request':request,'admin':admin,'products':products})
-
-
+@router.get('/search_product_name', response_class=HTMLResponse)
+def search_product_name(request: Request,query:str=Query(...)): 
+    admin = get_current_admin(request)
+    products = search_product(query)
+    categories = get_all_category()
+    categories = {category['id']:category['name'] for category in categories}
+    
+    seller = get_all_seller()
+    seller = {seller['id']:seller['name'] for seller in seller}
+    data = []
+    for product in products:
+        temp = {}
+        temp['id']=product['id']
+        temp['product'] = product['name']
+        temp['category'] = categories[product['cat_id']]
+        temp['price'] = product['price']
+        temp['seller'] = seller[product['seller_id']]
+        temp['quantity'] = product['stock']
+        data.append(temp)
+    return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})
