@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import Seller, Product
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
-from app.crud.seller import get_seller_mail, add_seller, get_seller
+from app.crud.seller import get_seller_mail, add_seller, get_seller, update_seller 
 from app.config.session import login_seller, get_current_seller,logout_seller
 from app.crud.product import get_product_sell, add_new_product, get_product, del_product, update_product
 from app.crud.category import get_all_category, get_category_name
@@ -134,3 +134,24 @@ def delete_product(request: Request, product_id:str):
     if product['seller_id'] == seller_info['id']:
         del_product(product_id)
         return RedirectResponse(url='/seller_dashboard')
+    
+@router.get('/seller_edit_info/', response_class=HTMLResponse)
+def seller_update(request: Request):
+    seller = get_current_seller(request)
+    seller_info = get_seller_mail(seller)
+    return templates.TemplateResponse("edit_seller_info.html",{'request':request,"seller":seller,"seller_info":seller_info,})
+
+@router.post('/seller_edit/', response_class=HTMLResponse)
+def seller_update(request: Request, name:str = Form(...), email: str=Form(...), phone: str=Form(...)):
+    seller=get_current_seller(request)
+    seller_data=get_seller_mail(seller)
+    seller=Seller(name=name,email=email,phone=phone)
+    ack=update_seller(seller, seller_data['id'])
+    if ack == False:
+        return templates.TemplateResponse("edit_seller_info.html",{"request":request,"error":"Email already exist","seller":seller})
+    elif ack == True:
+        return templates.TemplateResponse("edit_seller_info.html",{"request":request,"success":"Profile updated successfully","seller":seller})
+    else:
+        return templates.TemplateResponse("500.html",{"request":request})
+    
+    
