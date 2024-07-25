@@ -20,6 +20,11 @@
                             {{error}}
                           </div>
                         {% endif %}
+                        {% if message %}
+                        <div class="alert alert-success" role="alert">
+                            {{message}}
+                          </div>
+                        {% endif %}
                         <form action="/user_login" method="post">
                             <div class="form-group">
                                 <label for="email">EMAIL:</label>
@@ -34,7 +39,7 @@
                     </div>
                     <div class="card-footer text-center">
                         <a href="/add_user" class="float-left">Not Registered</a>
-                        <a href="#" class="float-right">Forgot Password?</a>
+                        <a href="/user_forgot_password" class="float-right">Forgot Password?</a>
                     </div>
                 </div>
             </div>

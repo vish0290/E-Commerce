@@ -32,8 +32,17 @@ def add_seller(seller: Seller):
         return False
     
 def update_seller(seller: Seller,seller_id):
-    query = {'_id':ObjectId(seller_id)}
-    seller_db.find_one_and_update(query,dict(seller))
+    seller = seller.dict()
+    find_seller = seller_serial(seller_db.find_one({'email':seller['email']}))
+    if find_seller != None:
+        if str(find_seller['id']) != seller_id:
+            return False
+        else:
+            query = {'_id':ObjectId(seller_id)}
+            setdata = {'$set':seller}
+            seller_db.update_one(query,setdata)
+            return True
+        
     
 def del_seller(seller_id):
     query = {'_id':ObjectId(seller_id)}

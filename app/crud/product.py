@@ -100,4 +100,21 @@ def get_product_by_cat_id_sort(cat_id,sort):
         return list_product(product_db.find(query).sort('price',sort))
     except:
         return None
+
+def get_product_by_cat_id_sort(cat_id, sort):
+    query = {'cat_id': cat_id, 'status': 'active'}
+    try:
+        products = list_product(product_db.find(query))
+        out_of_stock_exists = any(product['stock'] == 0 for product in products)
+        if out_of_stock_exists:
+            sort = -sort
+        sorted_products = list_product(product_db.find(query).sort('price', sort))
+        return sorted_products
+    except:
+        return None
     
+def get_recommended_products(category_id: str, current_product_id: str):
+    all_products = get_product_cat(category_id)
+    recommended_products = [prod for prod in all_products if prod['id'] != current_product_id]
+    return recommended_products[:4] 
+

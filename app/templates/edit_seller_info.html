@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>E commerce</title>
+    <title>Edit Seller Info</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -80,49 +80,22 @@
     </style>
   </head>
   <body>
-    {% if user %}
+    {% if seller_info %}
     <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
-      <div class="container-fluid">
-        <a href="/" class="navbar-brand">E-Store</a>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Category
-          </a>
-          <ul class="dropdown-menu">
-            {% for category in categories %}
-            <li><a class="dropdown-item" href="/user_category/{{category.id}}">{{ category.name }}</a></li>
-            {% endfor %}
-          </ul>
-        </li>
-
-        <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
-          <input id="search" name="query" class="form-control me-2 flex-grow-1" type="search" placeholder="What are you looking for ?" aria-label="Search">
-          <button class="btn btn-outline-success search-icon" type="submit">
-            <i class="bi bi-search"></i>
-          </button>
-        </form>
-
-        <div class="d-flex ms-auto">
-          <li class="nav-item">
-            <a class="bi bi-cart icon-white icon-large me-2" aria-current="page" href="/user_cart"></a>
-          </li>
-          <li class="nav-item">
-            <a class="bi bi-person-circle icon-white icon-large me-2" aria-current="page" href="/user_profile"></a>
-          </li>
-          <li class="nav-item">
-            <a class="bi bi-box-arrow-left icon-white icon-large me-2" aria-current="page" href="/user_logout"></a>
-          </li>
+        <div class="container-fluid">
+            <a href="/seller_dashboard" class="navbar-brand">E-Store Seller Dashboard</a>
+            <div class="d-flex ms-auto">
+                <a class="bi bi-box-arrow-right icon-white icon-large me-2" aria-current="page" href="/seller_logout"></a>
+            </div>
         </div>
-      </div>
     </nav>
-
+    
     <div class="container" style="position:absolute; left:0; right:0; top: 50%; transform: translateY(-50%); -ms-transform: translateY(-50%); -moz-transform: translateY(-50%); -webkit-transform: translateY(-50%); -o-transform: translateY(-50%);">
       <div class="row d-flex d-xl-flex justify-content-center justify-content-xl-center">
         <div class="col-sm-12 col-lg-10 col-xl-9 col-xxl-7 bg-white shadow-lg" style="border-radius: 5px;">
           <div class="p-5">
             <div>
-              <a class="bi btn-secondary bi-arrow-left-circle-fill icon-black icon-large me-2" aria-current="page" href="/user_profile" style="float: left;"></a>
+              <a class="bi btn-secondary bi-arrow-left-circle-fill icon-black icon-large me-2" aria-current="page" href="/seller_dashboard" style="float: left;"></a>
             </div>
             <div class="text-center">
               <h4 class="text-dark mb-4">Edit Profile</h4>
@@ -138,17 +111,17 @@
             </div>
             {% endif %}
 
-            <form class="user" method="POST" action="/user_profile_update">
+            <form class="user" method="POST" action="/seller_edit">
               <div class="mb-3">
-                <input class="form-control form-control-user" type="text" id="name" name="name" placeholder="Name" required="" value="{{user_data.name}}">
+                <input class="form-control form-control-user" type="text" id="name" name="name" placeholder="Name" required="" value="{{seller_info.name}}">
               </div>
               <div class="mb-3">
-                <input class="form-control form-control-user" type="email" id="email" name="email" placeholder="Email Address" required="" value="{{user_data.email}}">
+                <input class="form-control form-control-user" type="email" id="email" name="email" placeholder="Email Address" required="" value="{{seller_info.email}}">
               </div>
               <div class="mb-3">
-                <textarea class="form-control form-control-user" name="address" id="address" required="">{{user_data.address}}</textarea>
+                <input class="form-control form-control-user" type="phone" id="phone" name="phone" placeholder="Phone No" required="" value="{{seller_info.phone}}">
               </div>
-
+             
               <div class="row mb-3">
                 <p id="emailErrorMsg" class="text-danger" style="display:none;">Paragraph</p>
                 <p id="passwordErrorMsg" class="text-danger" style="display:none;">Paragraph</p>
@@ -201,7 +174,7 @@
     </script>
     {% else %}
     <script>
-      window.location.href = "/user_login";
+      window.location.href = "/404";
     </script>
     {% endif %}
 
