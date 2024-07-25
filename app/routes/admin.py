@@ -1,13 +1,13 @@
-from fastapi import APIRouter,Request,Form
+from fastapi import APIRouter,Request,Form,Query
 from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import Admin, Category, Product, User, Order, Seller
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.admin import get_admin_username
-from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category
-from app.crud.product import get_all_product,del_product,get_product
-from app.crud.user import get_all_user, get_user, del_user
-from app.crud.seller import get_all_seller, get_seller_mail, add_seller, del_seller,get_seller
+from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category,search_category
+from app.crud.product import get_all_product,del_product,get_product,search_product
+from app.crud.user import get_all_user, get_user, del_user,search_users_by_name
+from app.crud.seller import get_all_seller, get_seller_mail, add_seller, del_seller,get_seller,search_seller
 from app.crud.order import get_all_order, del_order
 from app.config.session import login_admin, get_current_admin,logout_admin
 from app.config.cypher import verify_password,hash_password
@@ -183,3 +183,66 @@ def delete_seller(request:Request,seller_id:str):
     admin=get_current_admin(request)
     del_seller(seller_id)
     return RedirectResponse(url="/manage_seller" )
+
+
+@router.get('/search_user',response_class=HTMLResponse)
+def search_user(request: Request, query:str=Query(...)):
+    admin = get_current_admin(request)
+    users =  search_users_by_name(query)
+    return templates.TemplateResponse('manage_user.html',{'request':request,"admin":admin,"users":users})
+
+@router.get('/search_category_name',response_class=HTMLResponse)
+def search_category_name(request:Request,query:str=Query(...)):
+    admin= get_current_admin(request)
+    categories =search_category(query)
+    return templates .TemplateResponse('manage_category.html',{'request':request,'admin':admin,'categories':categories})
+
+@router.get('/search_seller_name',response_class=HTMLResponse)
+def search_seller_name(request:Request,query:str=Query(...)):
+    admin=get_current_admin(request)
+    sellers=search_seller(query)
+    return templates.TemplateResponse('manage_seller.html',{'request':request,'admin':admin,'sellers':sellers})
+
+    
+    return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})
+@router.get('/order_logs',response_class=HTMLResponse)
+def order_logs(request: Request):
+    admin = get_current_admin(request)
+    orders_data = get_all_order()
+    orders = []
+    for item in orders_data:
+        order = {}
+        user_data = get_user(item['user_id'])
+        for product_id, quantity in item['product_data'].items():
+            product = get_product(product_id)
+            seller = get_seller(product['seller_id'])
+            order['id'] = item['id']
+            order['seller'] = seller['name']
+            order['product'] = product['name']
+            order['quantity'] = quantity
+            order['user'] = user_data['name']
+            order['category'] = get_category(product['cat_id'])['name']
+            order['price'] = int(product['price']) * quantity
+            orders.append(order)
+        
+    return templates.TemplateResponse('manage_order.html',{'request':request,"admin":admin,"orders":orders})
+@router.get('/search_product_name',response_class=HTMLResponse)
+def search_product_name(request: Request,query:str=Query(...)):
+    admin = get_current_admin(request)
+    products = search_product(query)
+    categories = get_all_category()
+    categories = {category['id']:category['name'] for category in categories}
+    
+    seller = get_all_seller()
+    seller = {seller['id']:seller['name'] for seller in seller}
+    data = []
+    for product in products:
+        temp = {}
+        temp['id']=product['id']
+        temp['product'] = product['name']
+        temp['category'] = categories[product['cat_id']]
+        temp['price'] = product['price']
+        temp['seller'] = seller[product['seller_id']]
+        temp['quantity'] = product['stock']
+        data.append(temp)
+    return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})

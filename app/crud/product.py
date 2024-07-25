@@ -87,13 +87,14 @@ def del_product(product_id):
     else:
         return False
 
-def search_product(query):
+def search_product(query:str):
     try:
         products = product_db.find({'name':{'$regex':query,"$options": "i"},'status':'active'})
         return list_product(products)
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+
 def get_product_by_cat_id_sort(cat_id,sort):
     query = {'cat_id':cat_id,'status':'active'}
     try:
@@ -125,4 +126,5 @@ def get_recommended_products(category_id: str, current_product_id: str):
     all_products = get_product_cat(category_id)
     recommended_products = [prod for prod in all_products if prod['id'] != current_product_id]
     return recommended_products[:4] 
+
 

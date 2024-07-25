@@ -53,9 +53,8 @@
             padding: 20px;
             flex: 1;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            position: relative;
         }
 
         .logout-button {
@@ -74,6 +73,11 @@
             margin-top: 50px;
         }
     
+        .search-bar {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
 
     </style>
 </head>
@@ -104,8 +108,17 @@
     <!-- Content -->
     <h1 id="user_title" class="mb-4 text-center">Manage Sellers</h1>
     <div class="container" >
-
         <a href="/add_seller" class="btn btn-primary" style="float: right;">Add Seller</a>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="container">
+        <form class="search-bar" action="/search_seller_name" method="get">
+            <div class="input-group">
+                <input id="search" name="query" class="form-control me-2" type="search" placeholder="Search by seller name" aria-label="Search">
+                <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Search</button>
+            </div>
+        </form>
     </div>
     
     <div class="content">
@@ -120,23 +133,26 @@
                         <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody>
-
+                <tbody id="seller-table-body">
                     {% for seller in sellers %}
                     <tr>
                         <td>{{ seller.id }}</td>
                         <td>{{ seller.name }}</td>
                         <td>{{ seller.email }}</td>
                         <td>
-                        <form action="/delete_seller/{{seller.id}}" method="get">
-                            <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
+                            <form action="/delete_seller/{{seller.id}}" method="get">
+                                <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No sellers found</td>
+                    </tr>
+
                     {% endfor %}
-                
                 </tbody>
             </table>
         </div>

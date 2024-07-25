@@ -56,4 +56,12 @@ def del_user(user_id):
 def update_last_login(user_id):
     query = {'_id':ObjectId(user_id)}
     user_db.find_one_and_update(query,{"$set":{"last_login":datetime.now().strftime("%d/%m/%Y %H:%M:%S")}})
-    
+
+def search_users_by_name(search_query):
+    query = {"name": {"$regex": search_query, "$options": "i"}, "status": "active"}
+    try:
+        users = list_user(user_db.find(query))
+        return users
+    except Exception as e:
+        print(f"Error searching users by name: {e}")
+        return None 

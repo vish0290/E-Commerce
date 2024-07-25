@@ -48,3 +48,15 @@ def del_seller(seller_id):
     query = {'_id':ObjectId(seller_id)}
     setdata = {'$set':{'status':'inactive'}}
     seller_db.update_one(query,setdata)
+
+def search_seller(search_query):
+    query = {"name": {"$regex": search_query, "$options": "i"}, "status": "active"}
+    try:
+        sellers= list_seller(seller_db.find(query))
+        return sellers
+    except Exception as e:
+        print(f"Error searching users by name: {e}")
+        return None 
+
+
+    

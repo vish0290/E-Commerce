@@ -21,3 +21,11 @@ def del_order(order_id):
     setdata = {'$set':{'status':'inactive'}}
     order_db.update_one(query,setdata)
     
+    
+# def search_order(name):
+#     query = {'name':{'$regex':name,'$options':'i'}}
+#     try:
+#         return list_order(order_db.find(query))
+#     except:
+#         return None
+    
