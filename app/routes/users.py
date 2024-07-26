@@ -8,9 +8,10 @@ from app.config.session import login_user, get_current_user,logout_user,get_temp
 from app.crud.category import get_all_category,get_category,search_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product,get_product_by_cat_id_sort,get_recommended_products
 from app.crud.cart import add_cart_product, get_cart_user, remove_cart_product, update_cart_product, checkout_cart
-from app.crud.order import get_order_user
+from app.crud.order import get_order_user,get_order
 from datetime import datetime
 from app.config.cypher import verify_password,hash_password
+import re
 
 
 router = APIRouter()
@@ -185,8 +186,26 @@ def order_confirmed(request: Request):
     user = get_current_user(request)
     categories = get_all_category()
     user_data = get_user_mail(user)
-    order = checkout_cart(user_data['id'])
-    return templates.TemplateResponse("order-confirmed.html",{"request":request,"user":user,"categories":categories})
+    res = checkout_cart(user_data['id'])
+    if res['message'] == 'False':
+        return RedirectResponse(url='/404')
+    else:
+        order_data = get_order(res['order_id'])
+        temp = {}
+        temp['order_id'] = order_data['id']
+        temp['order_date'] = order_data['order_date']
+        temp['grand_total'] = order_data['total_price']
+        temp['product_data'] = []
+        for prod_id, qty in order_data['product_data'].items():
+            product_data = {}
+            product = get_product(prod_id)
+            product_data['name'] = product['name']
+            product_data['price'] = product['price']
+            product_data['stock'] = qty
+            product_data['total_price'] = str(int(product['price']) * qty)
+            temp['product_data'].append(product_data)
+        order_data = temp
+        return templates.TemplateResponse("order-confirmed.html",{"request":request,"user":user,"categories":categories,'order_data':order_data})
 
 @router.get('/stock_check', response_class=JSONResponse)
 def stock_check(request: Request, product_id: str = Query(...), quantity: int = Query(...)):
@@ -214,23 +233,26 @@ def user_profile(request: Request, response: Response):
     user_data = get_user_mail(user)
     categories = get_all_category()
     orders = get_order_user(user_data['id'])
-    products = []
+    order_list = []
     for i in orders:
         temp = {}
         temp['order_id'] = i['id']
         temp['order_date'] = i['order_date']
-        for product_id, qty in i['product_data'].items():
-            product = get_product(product_id)
-            temp['name'] = product['name']
-            temp['base_feature'] = product['base_feature']
-            temp['images'] = product['images']
-            temp['price'] = product['price']
-            temp['stock'] = qty
-            temp['total_price'] = str(int(product['price']) * qty)
-            products.append(temp)
-    
-        response.headers["Cache-Control"] = "no-cache, no-store"
-    return templates.TemplateResponse("user_profile.html",{"request":request,"user":user,"user_data":user_data,"categories":categories,"products":products})
+        temp['grand_total'] = i['total_price']
+        temp['product_data'] = []
+        for prod_id, qty in i['product_data'].items():
+            product_data = {}
+            product = get_product(prod_id)
+            product_data['name'] = product['name']
+            product_data['base_feature'] = product['base_feature']
+            product_data['images'] = product['images']
+            product_data['price'] = product['price']
+            product_data['stock'] = qty
+            product_data['total_price'] = str(int(product['price']) * qty)
+            temp['product_data'].append(product_data)
+        order_list.append(temp)
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    return templates.TemplateResponse("user_profile.html",{"request":request,"user":user,"user_data":user_data,"categories":categories,"orders":order_list})
 
 @router.get('/user_edit_profile', response_class=HTMLResponse)
 def user_edit_profile(request: Request):
@@ -302,3 +324,35 @@ def auth_pass_update(request: Request, current_password: str = Form(...), passwo
         return templates.TemplateResponse("user_login.html",{"request":request,"message":"Password updated successfully"})
     else:
         return templates.TemplateResponse("500.html",{"request":request})
+    
+@router.get('/user_search_order', response_class=HTMLResponse)
+def user_search_order(request: Request, response: Response, query: str = Query(...)):
+    user = get_current_user(request)
+    if user is None:
+        return RedirectResponse(url="/user_login")
+    user_data = get_user_mail(user)
+    categories = get_all_category()
+    orders = get_order_user(user_data['id'])
+    order_list = []
+    for i in orders:
+        temp = {}
+        temp['order_id'] = i['id']
+        temp['order_date'] = i['order_date']
+        temp['grand_total'] = i['total_price']
+        temp['product_data'] = []
+        for prod_id, qty in i['product_data'].items():
+            product_data = {}
+            product = get_product(prod_id)
+            product_data['name'] = product['name']
+            product_data['base_feature'] = product['base_feature']
+            product_data['images'] = product['images']
+            product_data['price'] = product['price']
+            product_data['stock'] = qty
+            product_data['total_price'] = str(int(product['price']) * qty)
+            temp['product_data'].append(product_data)
+        product_name = [i['name'] for i in temp['product_data']]
+        if re.search(query, ' '.join(product_name), re.IGNORECASE):
+            order_list.append(temp)
+        
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    return templates.TemplateResponse("user_profile.html",{"request":request,"user":user,"user_data":user_data,"categories":categories,"orders":order_list})

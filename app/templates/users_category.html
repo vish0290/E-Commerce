@@ -56,7 +56,7 @@
     <div class="container">
         <h1>{{category.name}}</h1>
         <h2>{{category.description}}</h2>
-        <div class="dropdown">
+        <div class="sort_dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               Sort
             </button>
@@ -143,14 +143,14 @@
             position: relative;
         }
 
-        .dropdown {
+        .sort_dropdown {
             margin-bottom: 20px;
             position: absolute;
             right: 15px;
             top: 100px; /* Move it higher to create more space */
         }
 
-        .dropdown-menu {
+        .sort_dropdown-menu {
             padding: 1px;
             margin-left: 35px;
         }
