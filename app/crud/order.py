@@ -20,12 +20,11 @@ def del_order(order_id):
     query = {'_id':ObjectId(order_id)}
     setdata = {'$set':{'status':'inactive'}}
     order_db.update_one(query,setdata)
+    order_db.update_one(query,setdata)
     
-    
-# def search_order(name):
-#     query = {'name':{'$regex':name,'$options':'i'}}
-#     try:
-#         return list_order(order_db.find(query))
-#     except:
-#         return None
-    
+def get_order(order_id):
+    query = {'_id':ObjectId(order_id),'status':'active'}
+    try:
+        return order_serial(order_db.find_one(query))
+    except:
+        return None
