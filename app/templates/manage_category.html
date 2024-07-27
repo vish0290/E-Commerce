@@ -80,7 +80,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+    <nav class="navbar fixed-top bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
             <a href="/admin_dashboard" class="navbar-brand text-white">E-Store Admin Dashboard</a>
             <div class="d-flex ms-auto">
@@ -126,9 +126,14 @@
                         <td>{{ category.description }}</td>
                         <td>{{ category.last_change }}</td>
                         <td>
-                            <form action="/manage_category_del/{{ category.id }}" method="get">
+                            <form action="/manage_category_del/{{ category.id }}" method="get" style="display:inline-block;">
                                 <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
                                     <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                            <form action="/manage_category_edit/{{ category.id }}" method="get" style="display:inline-block;">
+                                <button class="btn btn-outline-primary btn-lg shadow-sm" id="product_option" type="submit">
+                                    <i class="bi bi-pencil-square"></i>
                                 </button>
                             </form>
                         </td>
