@@ -213,3 +213,4 @@ def auth_pass_update(request: Request, current_password: str = Form(...), passwo
         return templates.TemplateResponse("seller_login.html",{"request":request,"success":"Password updated successfully"})
     else:
         return templates.TemplateResponse("500.html",{"request":request})
+    

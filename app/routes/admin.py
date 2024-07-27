@@ -1,10 +1,10 @@
-from fastapi import APIRouter,Request,Form,Query
+from fastapi import APIRouter,Request,Form,Query,HTTPException
 from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import Admin, Category, Product, User, Order, Seller
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.admin import get_admin_username
-from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category,search_category
+from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category,search_category,update_category
 from app.crud.product import get_all_product,del_product,get_product,search_product
 from app.crud.user import get_all_user, get_user, del_user,search_users_by_name
 from app.crud.seller import get_all_seller, get_seller_mail, add_seller, del_seller,get_seller,search_seller
@@ -12,6 +12,9 @@ from app.crud.order import get_all_order, del_order
 from app.config.session import login_admin, get_current_admin,logout_admin
 from app.config.cypher import verify_password,hash_password
 import datetime
+from app.config.database import category_db
+from app.schemas.schemas import category_serial
+
 
 router = APIRouter()
 templates =  Jinja2Templates(directory='app/templates')
@@ -42,26 +45,14 @@ def logout(request: Request):
 
 
 
-
-#category routes
-# @router.post('/add_category',response_class=HTMLResponse)
-# def add_category(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
-#     category = Category(name=name,description=description,image=image,last_change=str(datetime.datetime.now()))
-#     ack = add_category(category)
-#     if ack:
-#         return RedirectResponse(url='/admin_dashboard',status_code=302)
-#     else:
-#         return templates.TemplateResponse("add_category.html", {"request": request,"message":"Something went wrong"})
-
-
-@router.post('/add_category')
-def add_category(name:str, description:str, image:str):
-    category = Category(name=name, description=description, image=image, last_change=str(datetime.datetime.now()), status='active')
+@router.post('/add_category',response_class=HTMLResponse)
+def add_category_new(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
+    category = Category(name=name,description=description,image=image,last_change=str(datetime.datetime.now()))
     ack = add_new_category(category)
     if ack:
-        return {'message':'category added successfully'}
+        return RedirectResponse(url='/admin_dashboard',status_code=302)
     else:
-        return {'message':'something went wrong'}
+        return templates.TemplateResponse("add_category.html", {"request": request,"message":"Something went wrong"})
     
 
 @router.get('/manage_user',response_class=HTMLResponse)
@@ -246,3 +237,30 @@ def search_product_name(request: Request,query:str=Query(...)):
         temp['quantity'] = product['stock']
         data.append(temp)
     return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})
+    
+@router.get("/manage_category_edit/{category_id}", response_class=HTMLResponse)
+def edit_category_page(request: Request, category_id: str):
+    category = get_category(category_id)
+    return templates.TemplateResponse("edit_category.html", {"request": request, "category": category})
+
+@router.post('/category_edit/', response_class=HTMLResponse)
+def category_update(request: Request, category_id: str = Form(...), name: str = Form(...), description: str = Form(...), image:str= Form(...)):
+    category_data=get_category(category_id)
+    if category_data is None:
+        return templates.TemplateResponse("500.html", {"request": request, "error": "Category not found"})
+    
+    category = Category(name=name, description=description, image=image, last_change=str(datetime.datetime.now()), status='active')
+    ack = update_category(category, category_id)
+    
+    if not ack:
+        return templates.TemplateResponse("edit_category.html", {"request": request, "error": "Category name already exists", "category": category_data})
+    elif ack:
+        admin = get_current_admin(request)
+        categories = get_all_category()
+        return templates.TemplateResponse('manage_category.html',{'request':request,"admin":admin,"categories":categories})
+
+    else:
+        return templates.TemplateResponse("500.html", {"request": request})
+    
+    
+   

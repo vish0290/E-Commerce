@@ -56,3 +56,16 @@ def search_category(name):
         return list_category(category_db.find(query))
     except:
         return None
+
+def update_category(category: Category, category_id: str) -> bool:
+    category_data = category.dict()
+    find_category = category_serial(category_db.find_one({'name': category_data['name']}))
+    
+    if find_category is not None:
+        if str(find_category['id']) != category_id:
+            return False
+    query = {'_id': ObjectId(category_id)}
+    set_data = {'$set': category_data}
+    category_db.update_one(query, set_data)
+    
+    return True
