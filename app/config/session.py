@@ -26,8 +26,8 @@ def login_seller(request: Request, seller_id: str,role: str ):
 def logout_seller(request: Request):
     request.session.clear()
 
-def login_admin(request: Request, email: str):
-    request.session['email'] = email
+def login_admin(request: Request, username: str):
+    request.session['username'] = username
     request.session['role'] = 'admin'
     
 def logout_admin(request: Request):
@@ -69,7 +69,7 @@ def get_temp_seller(request: Request):
     return None
 
 def get_current_admin(request: Request):
-    admin_id = request.session.get("admin_id")
+    admin_id = request.session.get("username")
     role = request.session.get("role")
     if admin_id and role == "admin":
         return admin_id

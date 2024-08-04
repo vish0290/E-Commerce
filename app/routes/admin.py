@@ -26,7 +26,8 @@ def login_page(request: Request):
 @router.post('/admin_login',response_class=HTMLResponse)
 def login(request: Request, username:str = Form(...), password:str = Form(...)):
     admin = get_admin_username(username)
-    if admin != None and verify_password(admin['password'],password):
+    print(admin['password'],hash_password(password))
+    if  admin != None and verify_password(admin['password'],password):
         login_admin(request,str(admin['username']))
         return RedirectResponse(url='/admin_dashboard',status_code=302)
     return templates.TemplateResponse('admin_login.html',{'request':request,"error":"invalid username or password"})
@@ -278,12 +279,14 @@ def admin_reset_password(
     admin = get_admin_username(username)
     if not admin:
         return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "User doesn't exist."})
-    current_password=hash_password(current_password)
+    
+    res = verify_password(admin['password'],current_password)
+    print(res)
     if verify_password(admin['password'],current_password) == False:
         return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "Current password is incorrect."})
 
     if update_admin(admin["username"], hash_password(new_password)):
-        return RedirectResponse(url="/admin_login")
+        return templates.TemplateResponse('admin_login.html',{'request':request,"success":"Password updated successfully"})
     else:
         return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "Error updating password."})
 
