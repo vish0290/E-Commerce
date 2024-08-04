@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import Admin, Category, Product, User, Order, Seller
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
-from app.crud.admin import get_admin_username
+from app.crud.admin import  get_admin_username,update_admin
 from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category,search_category,update_category
 from app.crud.product import get_all_product,del_product,get_product,search_product
 from app.crud.user import get_all_user, get_user, del_user,search_users_by_name
@@ -42,8 +42,6 @@ def dashboard(request: Request):
 def logout(request: Request):
     logout_admin(request)
     return RedirectResponse(url='/admin_login',status_code=302)
-
-
 
 @router.post('/add_category',response_class=HTMLResponse)
 def add_category_new(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
@@ -195,7 +193,7 @@ def search_seller_name(request:Request,query:str=Query(...)):
     return templates.TemplateResponse('manage_seller.html',{'request':request,'admin':admin,'sellers':sellers})
 
     
-    return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})
+    #return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})
 @router.get('/order_logs',response_class=HTMLResponse)
 def order_logs(request: Request):
     admin = get_current_admin(request)
@@ -262,5 +260,32 @@ def category_update(request: Request, category_id: str = Form(...), name: str = 
     else:
         return templates.TemplateResponse("500.html", {"request": request})
     
+@router.get("/admin_forgot_password", response_class=HTMLResponse)
+def admin_forgot_password(request: Request):
+    return templates.TemplateResponse("admin_reset_password.html", {"request": request})
+
+@router.post("/admin_reset_password", response_class=HTMLResponse)
+def admin_reset_password(
+    request: Request,
+    username: str = Form(...),
+    current_password: str = Form(...),
+    new_password: str = Form(...),
+    confirm_new_password: str = Form(...)
+):
+    if new_password != confirm_new_password:
+        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "New passwords do not match."})
+
+    admin = get_admin_username(username)
+    if not admin:
+        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "User doesn't exist."})
+    current_password=hash_password(current_password)
+    if verify_password(admin['password'],current_password) == False:
+        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "Current password is incorrect."})
+
+    if update_admin(admin["username"], hash_password(new_password)):
+        return RedirectResponse(url="/admin_login")
+    else:
+        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "Error updating password."})
+
     
    
