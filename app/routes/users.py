@@ -139,11 +139,11 @@ async def catch_all(request: Request):
 @router.get('/user_cart',response_class=HTMLResponse)
 def cart(request: Request):
     user = get_current_user(request)
-    if user == None:
-        return RedirectResponse(url="/404")
     user_data = get_user_mail(user)
     categories = get_all_category()
     cart_data = get_cart_user(user_data['id'])
+    if user == None:
+        return RedirectResponse(url="/404")
     products = []
     super_total = 0
     if cart_data != None:
