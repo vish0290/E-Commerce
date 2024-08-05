@@ -44,6 +44,11 @@ def logout(request: Request):
     logout_admin(request)
     return RedirectResponse(url='/admin_login',status_code=302)
 
+@router.get('/add_category',response_class=HTMLResponse)
+def category_page(request: Request):
+    admin = get_current_admin(request)
+    return templates.TemplateResponse('manage_user.html',{'request':request,"admin":admin})
+
 @router.post('/add_category',response_class=HTMLResponse)
 def add_category_new(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
     category = Category(name=name,description=description,image=image,last_change=str(datetime.datetime.now()))
@@ -52,7 +57,8 @@ def add_category_new(request: Request, name:str = Form(...), description:str = F
         return RedirectResponse(url='/admin_dashboard',status_code=302)
     else:
         return templates.TemplateResponse("add_category.html", {"request": request,"message":"Something went wrong"})
-    
+
+
 
 @router.get('/manage_user',response_class=HTMLResponse)
 def manage_user(request: Request):
