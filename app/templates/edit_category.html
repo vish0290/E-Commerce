@@ -39,10 +39,13 @@
         <h2>Edit Category</h2>
         <form action="/category_edit/" method="post">
             <input type="hidden" name="category_id" value="{{ category.id }}" >
-            <input type="hidden" name="image" value="{{category.image}}">
             <div class="mb-3">
                 <label for="name" class="form-label">Category Name</label>
                 <input type="text" class="form-control" id="name" name="name" value="{{ category.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Image URL</label>
+                <input type="text" class="form-control" id="image" name="image" value="{{ category.image }}" required>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>

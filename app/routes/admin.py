@@ -47,7 +47,7 @@ def logout(request: Request):
 @router.get('/add_category',response_class=HTMLResponse)
 def category_page(request: Request):
     admin = get_current_admin(request)
-    return templates.TemplateResponse('manage_user.html',{'request':request,"admin":admin})
+    return templates.TemplateResponse('add_category.html',{'request':request,"admin":admin})
 
 @router.post('/add_category',response_class=HTMLResponse)
 def add_category_new(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
