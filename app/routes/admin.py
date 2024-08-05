@@ -51,12 +51,13 @@ def category_page(request: Request):
 
 @router.post('/add_category',response_class=HTMLResponse)
 def add_category_new(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
+    admin = get_current_admin(request)
     category = Category(name=name,description=description,image=image,last_change=str(datetime.datetime.now()))
     ack = add_new_category(category)
     if ack:
         return RedirectResponse(url='/admin_dashboard',status_code=302)
     else:
-        return templates.TemplateResponse("add_category.html", {"request": request,"message":"Something went wrong"})
+        return templates.TemplateResponse("add_category.html", {"request": request,"admin":admin,"message":"Something went wrong"})
 
 
 
@@ -164,7 +165,7 @@ def seller_register(request: Request, name:str = Form(...), email: str=Form(...)
     admin = get_current_admin(request)
     item = get_seller_mail(email)
     if item != None:
-        return templates.TemplateResponse("add_seller.html", {"request": request,"message":"Seller Already exist"})
+        return templates.TemplateResponse("add_seller.html", {"request": request,"admin":admin,"message":"Seller Already exist"})
     else:
         password = hash_password(password)
         seller = Seller(name=name,email=email,password=password,phone=number,status='active')
@@ -245,14 +246,16 @@ def search_product_name(request: Request,query:str=Query(...)):
     
 @router.get("/manage_category_edit/{category_id}", response_class=HTMLResponse)
 def edit_category_page(request: Request, category_id: str):
+    admin = get_current_admin(request)
     category = get_category(category_id)
-    return templates.TemplateResponse("edit_category.html", {"request": request, "category": category})
+    return templates.TemplateResponse("edit_category.html", {"request": request,"admin":admin, "category": category})
 
 @router.post('/category_edit/', response_class=HTMLResponse)
 def category_update(request: Request, category_id: str = Form(...), name: str = Form(...), description: str = Form(...), image:str= Form(...)):
     category_data=get_category(category_id)
+    admin = get_current_admin(request)
     if category_data is None:
-        return templates.TemplateResponse("500.html", {"request": request, "error": "Category not found"})
+        return templates.TemplateResponse("500.html", {"request": request,"admin":admin, "error": "Category not found"})
     
     category = Category(name=name, description=description, image=image, last_change=str(datetime.datetime.now()), status='active')
     ack = update_category(category, category_id)

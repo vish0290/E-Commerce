@@ -80,6 +80,7 @@
     </style>
 </head>
 <body>
+    {%if admin%}
     <nav class="navbar fixed-top bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
             <a href="/admin_dashboard" class="navbar-brand text-white">E-Store Admin Dashboard</a>
@@ -143,5 +144,9 @@
             </table>
         </div>
     </div>
-
+    {%else%}
+    <script>
+        window.location.href='/admin_login'
+    </script>
+    {%endif%}
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybBogGzog7uwjT9tS9vO1urLX59Cw5F5L6LR9ERFJ0skvXUS4" crossorigin
