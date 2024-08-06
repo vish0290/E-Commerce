@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.seller import get_seller_mail, add_seller, get_seller, update_seller 
 from app.config.session import login_seller, get_current_seller,logout_seller,get_temp_seller
-from app.crud.product import get_product_sell, add_new_product, get_product, del_product, update_product,search_product_by_name_seller_id
+from app.crud.product import get_product_sell, add_new_product, get_product, del_product, update_product,search_product_by_name_seller_id, get_product_name
 from app.crud.category import get_all_category, get_category_name
 from typing import List
 import base64
@@ -70,6 +70,9 @@ async def addproductinfpr(
         encoded_images.append(encoded)
     seller = get_current_seller(request)
     seller_info = get_seller_mail(seller)
+    existing_products = get_product_name(name)
+    if existing_products != None and existing_products['seller_id'] == seller_info['id']:
+        return templates.TemplateResponse("seller_product.html",{'request':request,"seller":seller,"categories":get_all_category(),'message':'exist'})
     product = Product(
         name=name,
         images=encoded_images[::-1],
@@ -142,10 +145,10 @@ def seller_update(request: Request):
     return templates.TemplateResponse("edit_seller_info.html",{'request':request,"seller":seller,"seller_info":seller_info,})
 
 @router.post('/seller_edit/', response_class=HTMLResponse)
-def seller_update(request: Request, name:str = Form(...), email: str=Form(...), phone: str=Form(...)):
+def seller_update(request: Request, name:str = Form(...), phone: str=Form(...)):
     seller=get_current_seller(request)
     seller_data=get_seller_mail(seller)
-    seller=Seller(name=name,email=email,password=seller_data['password'], phone=phone)
+    seller=Seller(name=name,email=seller_data['email'],password=seller_data['password'], phone=phone)
     ack=update_seller(seller, seller_data['id'])
     if ack == False:
         return templates.TemplateResponse("edit_seller_info.html",{"request":request,"error":"Email already exist","seller":seller,"seller_info":seller_data})

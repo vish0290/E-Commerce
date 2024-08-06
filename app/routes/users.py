@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from bson import ObjectId
 from app.crud.user import get_user_mail,add_user, update_last_login,update_user
 from app.config.session import login_user, get_current_user,logout_user,get_temp_user
-from app.crud.category import get_all_category,get_category,search_category
+from app.crud.category import get_all_category,get_category,search_category,get_random_4_category
 from app.crud.product import get_product_cat, get_random_product, search_product,get_product,get_product_by_cat_id_sort,get_recommended_products
 from app.crud.cart import add_cart_product, get_cart_user, remove_cart_product, update_cart_product, checkout_cart
 from app.crud.order import get_order_user,get_order
@@ -64,7 +64,7 @@ def user_registration(request: Request):
 @router.get('/', response_class=HTMLResponse)
 def landing_page(request: Request):
     user = get_current_user(request)
-    categories = get_all_category()
+    categories = get_random_4_category()
     products = get_random_product()
     return templates.TemplateResponse("user_landing.html",{"request":request,"user":user,"categories":categories,"products":products})
 #category page
@@ -86,7 +86,6 @@ def search(request: Request, query: str):
     cat_list = search_category(query)
     for cat in cat_list:
         cat_product += get_product_cat(str(cat['id']))
-        print(cat_product)
     if res_products != None and cat_list != None:
         res_products += cat_product
     elif res_products == None and cat_list != None:
@@ -262,11 +261,11 @@ def user_edit_profile(request: Request):
     return templates.TemplateResponse("edit_user.html",{"request":request,"user":user,"user_data":user_data,"categories":categories})
 
 @router.post('/user_profile_update', response_class=RedirectResponse)
-def user_edit_profile(request: Request, name:str = Form(...), email: str=Form(...), address: str=Form(...)):
+def user_edit_profile(request: Request, name:str = Form(...), address: str=Form(...)):
     user = get_current_user(request)
     user_data = get_user_mail(user)
     categories = get_all_category()
-    user = User(name=name,email=email,address=address,password=user_data['password'],id=user_data['id'])
+    user = User(name=name,email=user_data['email'],address=address,password=user_data['password'],id=user_data['id'])
     ack = update_user(user,user_data['id'])
     if ack == False:
         return templates.TemplateResponse("edit_user.html",{"request":request,"error":"Email already exist","user":user,"categories":categories,"user_data":user_data})
