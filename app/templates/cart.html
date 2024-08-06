@@ -71,7 +71,7 @@
         display: flex;
         color: white;
         justify-content: space-between;
-      }
+    }
       .icon-white {
         color: white;
     }
@@ -200,16 +200,16 @@
     <div class="container-fluid">
         <a href="/" class="navbar-brand">E-Store</a>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Category
-                </a>
-                <ul class="dropdown-menu">
-                    {% for category in categories %}
-                    <li><a class="dropdown-item" href="/user_cart/{{category.id}}">{{ category.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Category
+          </a>
+          <ul class="dropdown-menu">
+              {% for category in categories %}
+              <li><a class="dropdown-item" href="/user_category/{{category.id}}">{{ category.name }}</a></li>
+              {% endfor %}
+          </ul>
+      </li>
         
         
         <form method="get" action="/search/" class="d-flex mx-auto w-50" role="search">
@@ -233,7 +233,7 @@
                     <a class="bi bi-cart icon-white icon-large me-2" aria-current="page" href="/user_cart"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="bi bi-person-circle icon-white icon-large me-2" aria-current="page" href="#"></a>
+                    <a class="bi bi-person-circle icon-white icon-large me-2" aria-current="page" href="/user_profile"></a>
                 </li>
                 <li class="nav-item">
                     <a class="bi bi-box-arrow-left icon-white icon-large me-2" aria-current="page" href="/user_logout"></a>
@@ -267,10 +267,10 @@
             </p>
           </div>
         </div>
-        <div class="d-flex align-items-center mt-auto">
-          <button id="add" data-product-id="{{product.id}}" class="btn btn-primary btn-sm mr-1">+</button>
-          <p id="qty" class="mb-0">{{product.qty}}</p>
-          <button id="subtract" data-product-id="{{product.id}}" class="btn btn-primary btn-sm ml-1">-</button>
+        <div class="d-flex align-items-center mt-auto" >
+          <button id="add" data-product-id="{{product.id}}" class="btn btn-primary btn-sm mr-1" >+</button>
+          <p id="qty" class="mb-0" style="margin-left: 5px;">{{product.qty}}</p>
+          <button id="subtract" data-product-id="{{product.id}}" class="btn btn-primary btn-sm ml-1" style="margin-left: 5px;">-</button>
         </div>
       </div>
       <button onclick="remove_product('{{product.id}}')" class="btn btn-outline-danger btn-lg shadow-sm ml-auto"  id="product_option" type="submit">
@@ -306,7 +306,6 @@
  </script>
  {%endif%}      
 </body>
-</html>
 
 <script>
   // Add event listeners to "+" and "-" buttons
@@ -316,3 +315,6 @@
   addButtons.forEach(button => button.addEventListener('click', () => increaseQuantity(button)));
   subtractButtons.forEach(button => button.addEventListener('click', () => decreaseQuantity(button)));
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</html>
