@@ -24,6 +24,14 @@ def get_all_category():
         return list_category(category_db.find({'status':'active'}))
     except:
         return None
+def get_random_4_category():
+    try:
+        return list_category(category_db.aggregate([
+            {'$match':{'status':'active'}},
+            {'$sample':{'size':4}}
+            ]))
+    except:
+        return None
 
 def add_new_category(category: Category):
     ack = category_db.insert_one(dict(category)) 
