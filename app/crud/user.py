@@ -57,7 +57,7 @@ def update_last_login(user_id):
     query = {'_id':ObjectId(user_id)}
     user_db.find_one_and_update(query,{"$set":{"last_login":datetime.now().strftime("%d/%m/%Y %H:%M:%S")}})
 
-def search_users_by_name(search_query):
+def search_users_by_name(search_query:str):
     query = {"name": {"$regex": search_query, "$options": "i"}, "status": "active"}
     try:
         users = list_user(user_db.find(query))

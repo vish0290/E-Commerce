@@ -59,7 +59,7 @@ def restore_category(category_id):
     order_db.find_and_modify({'category_id':category_id},{'$set':{'status':'active'}})
 
 def search_category(name):
-    query = {'name':{'$regex':name,'$options':'i'}}
+    query = {'name':{'$regex':name,'$options':'i'},'status': 'active'}
     try:
         return list_category(category_db.find(query))
     except:

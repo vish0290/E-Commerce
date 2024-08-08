@@ -77,10 +77,14 @@
             max-width: 400px;
             margin: 20px auto;
         }
+
+        .back-button {
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body>
-    {%if admin%}
+    {% if admin %}
     <nav class="navbar fixed-top bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
             <a href="/admin_dashboard" class="navbar-brand text-white">E-Store Admin Dashboard</a>
@@ -110,6 +114,10 @@
             </div>
         </form>
 
+        <div class="back-button">
+            <a href="/manage_user" class="btn btn-secondary">Back to Full List</a>
+        </div>
+
         <div class="table-container">
             <table class="table table-striped">
                 <thead>
@@ -129,7 +137,7 @@
                         <td>{{ user.address }}</td>
                         <td>
                             <form action="/del_user/{{ user.id }}" method="get">
-                                <button class="btn btn-outline-danger btn-lg shadow-sm" id="product_option" type="submit">
+                                <button class="btn btn-outline-danger btn-lg shadow-sm" id="user_option" type="submit">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
@@ -137,16 +145,19 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="text-center">No sellers found</td>
+                        <td colspan="5" class="text-center">{{ message }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-    {%else%}
+    {% else %}
     <script>
         window.location.href='/admin_login'
     </script>
-    {%endif%}
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybBogGzog7uwjT9tS9vO1urLX59Cw5F5L6LR9ERFJ0skvXUS4" crossorigin
+    {% endif %}
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybBogGzog7uwjT9tS9vO1urLX59Cw5F5L6LR9ERFJ0skvXUS4" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-Qh6NAKOZzrVo9n8LPAI4bDs3J/q5p/qKjSvyD7v2yeRkp91fRyyBZ7LoupWPe8hb" crossorigin="anonymous"></script>
+</body>
+</html>
