@@ -1,0 +1,26 @@
+[
+    {
+        "name":"Laptop",
+        "image":"https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/refurb-macbook-air-space-gray-m1-202010?wid=1144&hei=1144&fmt=jpeg&qlt=90&.v=1634145627000",
+        "description":"Laptop is a portable computer that is small enough to use in your lap. It is a computer that is portable and suitable for use while traveling.",
+        "status":"active"
+    },
+    {
+        "name":"Mobile",
+        "image":"https://images.samsung.com/is/image/samsung/p6pim/de/2401/gallery/de-galaxy-s24-s928-sm-s928bztheub-thumb-539313167",
+        "description":"Powerful mobile phone with a large screen, high-quality camera, and a long battery life.",
+        "status":"active"
+    },
+    {
+        "name":"Headset",
+        "image":"https://m.media-amazon.com/images/I/61aT4CcnGmL._AC_UF894,1000_QL80_.jpg",
+        "description":"High quality headset with noise cancellation and long battery life.",
+        "status":"active"
+    },
+    {
+        "name":"Camera",
+        "image":"https://www.jbhifi.com.au/cdn/shop/products/652310-Product-0-I-638204870412595312.jpg?v=1710454763",
+        "description":"High quality camera with high resolution and long battery life.",
+        "status":"active"
+    }
+]

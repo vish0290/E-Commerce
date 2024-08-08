@@ -1,0 +1,186 @@
+[
+    {
+        "name":"Apple iPhone 15",
+        "images":[
+            "https://m.media-amazon.com/images/I/61eEYLATF9L._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/81PrJnx+5uL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/51U60UKjYlL._AC_SX679_.jpg"
+        ],
+        "price": "700",
+        "base_feature":"6.1-inch Super Retina XDR display",
+        "stock": 10,
+        "description": "The iPhone 15 introduces Dynamic Island, bringing live activities and notifications to the forefront, ensuring you never miss a beat. It features a robust design with a 6.1-inch Super Retina XDR display that’s brighter in sunlight, a 48 MP main camera with 2x telephoto zoom, and next-gen portrait capabilities. Powered by the efficient A16 Bionic Chip, it supports USB-C connectivity and includes vital safety features like SOS via satellite and accident detection.",
+        "cat_id": "Mobile",
+        "seller_id": "vish",
+        "status": "active"
+
+    },
+    {
+        "name":"Samsung Galaxy S24 Ultra",
+        "images":[
+            "https://m.media-amazon.com/images/I/61VxzwqgIdL._AC_SY450_.jpg",
+            "https://m.media-amazon.com/images/I/510PquT4K2L._AC_SY450_.jpg",
+            "https://m.media-amazon.com/images/I/51Ggt7y6zlL._AC_SY450_.jpg"
+        ],
+        "price": "1100",
+        "base_feature":"GALAXY S24 ULTRA 12/512 BLACK",
+        "stock": 10,
+        "description":"The Galaxy S24 Ultra features advanced Galaxy AI for modern searches, real-time translations, note summaries, and effortless photo editing. Its durable titanium frame and Corning® Gorilla® Armor Glass provide enhanced protection, while the S Pen offers precise writing and navigation on the new flat display. The 200 MP camera, with AI processing and ProVisual Engine, captures stunning details, even in low light. Enhanced gameplay is supported by faster processing and a larger vapor chamber, while the long-lasting battery and ultra-bright 2,600-nit display ensure an exceptional user experience.",
+        "cat_id": "Mobile",
+        "seller_id": "vish",
+        "status": "active"
+    },
+    {
+        "name":"Google Pixel 8 ",
+        "images":[
+            "https://m.media-amazon.com/images/I/718Uw+pDCVL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/817mG1kkphL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/81VWnzriAwL._AC_SX679_.jpg"
+        ],
+        "price":"661",
+        "base_feature":"Obsidian, 256GB",
+        "stock": 20,
+        "description":"The Google Pixel 8, powered by the Tensor G3 chip, delivers fast and efficient performance with AI-driven personalized support. It features a sleek design, partly made from recycled materials, and a vibrant 6.2-inch display with a 120Hz refresh rate for smooth scrolling. The intelligent battery can last over 24 hours, and with extreme power saving mode, up to 72 hours. Enhanced photography features include Best Shot for perfect group photos and Magic Audio Eraser for eliminating unwanted background noise, while night vision and astrophotography capture stunning low-light images.",
+        "cat_id": "Mobile",
+        "seller_id": "vish",
+        "status": "active"
+
+    },
+    {
+        "name":"MacBook Air 13 inch",
+        "images":[
+            "https://m.media-amazon.com/images/I/715XwL-mMkL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/71LFkne2qOL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/619bkOWl63L._AC_SX679_.jpg"
+        ],
+        "price":"1099",
+        "base_feature":"8 GB Shared Memory, 256 GB SSD Memory",
+        "stock": 20,
+        "description":"Apple 2024 13 inch MacBook Air Laptop with M3 Chip: 13.6 Inch Liquid Retina Display, 8 GB Shared Memory, 256 GB SSD Memory, Illuminated Keyboard, 1080p FaceTime HD Camera, Touch ID, Polar Star",
+        "cat_id": "Laptop",
+        "seller_id": "naveen",
+        "status": "active"
+    },
+    {
+        "name":"ASUS ROG Strix G16 Laptop",
+        "images":[
+            "https://m.media-amazon.com/images/I/71H3st83UaL._AC_SY450_.jpg",
+            "https://m.media-amazon.com/images/I/71ukyeMhWwL._AC_SY450_.jpg",
+            "https://m.media-amazon.com/images/I/61dtqLGuT0L._AC_SY450_.jpg"
+        ],
+        "price":"1979",
+        "base_feature":"16 GB RAM | 1 TB SSD | NVIDIA RTX 4070",
+        "stock": 20,
+        "description":"ASUS ROG Strix G16 Laptop: 16 GB RAM | 1 TB SSD | NVIDIA RTX 4070 | 16-inch 4K UHD OLED Display | Windows 11 | 2.5 kg",
+        "cat_id": "Laptop",
+        "seller_id": "naveen",
+        "status": "active"
+    },
+    {
+        "name":"Samsung Galaxy Book4 Edge Galaxy AI Laptop",
+        "images":[
+            "https://m.media-amazon.com/images/I/71zVWTeBEAL._AC_SY450_.jpg",
+            "https://m.media-amazon.com/images/I/61wHUsGzFkL._AC_SY450_.jpg",
+            "https://m.media-amazon.com/images/I/61GDY4so6jL._AC_SY450_.jpg"
+        ],
+        "price":"1827",
+        "base_feature":"16 GB RAM, Snapdragon X Elite Pro Processor",
+        "stock": 20,
+        "description":"Samsung Galaxy Book4 Edge Galaxy AI Laptop: 16 GB RAM, Snapdragon X Elite Pro Processor, 1 TB SSD, 16-inch 4K UHD OLED Display, Windows 11, 2.5 kg",
+        "cat_id": "Laptop",
+        "seller_id": "naveen",
+        "status": "active"
+    },
+    {
+        "name":"CMF by Nothing Buds Pro 2",
+        "images":[
+            "https://m.media-amazon.com/images/I/71Y9-4usNCL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/71AtNo9htdL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/71NAaESw1GL._AC_SX679_.jpg"
+        ],
+        "price":"59",
+        "base_feature":"Active Noise Cancellation, 34 Hours Battery Life",
+        "stock": 20,
+        "description":"CMF by Nothing Buds Pro 2 Wireless Earbuds with HiFi Sound, 50dB Intelligent Active Noise Cancellation, 6 HD Microphones and Spatial Audio Effect - Orange",
+        "cat_id":"Headset",
+        "seller_id": "lavanya",
+        "status": "active"
+    },
+    {
+        "name":"Sony WH-1000XM5 Headphones ",
+        "images":[
+            "https://m.media-amazon.com/images/I/61fxPWFu6aL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/6152kum-feL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/61aoJ5lpf6L._AC_SX679_.jpg"
+        ],
+        "price":"289",
+        "base_feature":"Wireless Bluetooth Noise Cancelling Headphones",
+        "stock": 20,
+        "description":"Sony WH-1000XM5 Wireless Bluetooth Noise Cancelling Headphones with Mic, 30 Hours Battery Life, Quick Charge, Gesture Control, Ambient Sound Mode, Alexa Voice Control - Black",
+        "cat_id":"Headset",
+        "seller_id": "lavanya",
+        "status": "active"
+
+    },
+    {
+        "name":"Jabra Elite 7 Pro",
+        "images":[
+            "https://m.media-amazon.com/images/I/61GTyI73LhL.__AC_SX300_SY300_QL70_ML2_.jpg",
+            "https://m.media-amazon.com/images/I/61Km8P9TgRL._AC_SX679_.jpg",
+            "https://m.media-amazon.com/images/I/61mFC3nYiUL._AC_SX679_.jpg"    
+        ],
+        "price":"199",
+        "base_feature":"Active Noise Cancellation, 9 Hours Battery Life",
+        "stock": 20,
+        "description":"Jabra Elite 7 Pro True Wireless Earbuds with Active Noise Cancellation, 9 Hours Battery Life, 35 Hours with Charging Case, Wireless Charging, Customizable Sound, Voice Assistant, Black",
+        "cat_id":"Headset",
+        "seller_id": "lavanya",
+        "status": "active"
+    },
+    {
+        "name":"Canon EOS R5",
+        "images":[
+            "https://m.media-amazon.com/images/I/81F4XkfRfsL.__AC_SX300_SY300_QL70_ML2_.jpg",
+            "https://m.media-amazon.com/images/I/81uDAuiAdlL._AC_SY450_.jpg",
+            "https://m.media-amazon.com/images/I/810Piu6m7JL._AC_SY450_.jpg"    
+        ],
+        "price":"3899",
+        "base_feature":"45 MP Full-Frame CMOS Sensor, 8K Video Recording",
+        "stock": 20,
+        "description":"Canon EOS R5 Full-Frame Mirrorless Camera with 45 MP Full-Frame CMOS Sensor, DIGIC X Image Processor, 8K Video Recording, Dual Pixel CMOS AF II, 5-Axis Image Stabilization, 3.2-inch LCD Touchscreen, Wi-Fi, Bluetooth, and GPS",
+        "cat_id": "Camera",
+        "seller_id": "anubhav",
+        "status": "active"
+    },
+    {
+        "name":"Sony Alpha 7 IV",
+        "images":[
+            "https://m.media-amazon.com/images/I/819+EOCsREL._AC_SX450_.jpg",
+            "https://m.media-amazon.com/images/I/81xZJwxL+rL._AC_SX450_.jpg",
+            "https://m.media-amazon.com/images/I/71kOhQQqgWL._AC_SX450_.jpg"
+        ],
+        "price":"2499",
+        "base_feature":"33 MP Full-Frame CMOS Sensor, 4K Video Recording",
+        "stock": 20,
+        "description":"Sony Alpha 7 IV Full-Frame Mirrorless Camera with 33 MP Full-Frame CMOS Sensor, BIONZ XR Image Processor, 4K Video Recording, Real-Time Eye AF, 5-Axis Image Stabilization, 3-inch LCD Touchscreen, Wi-Fi, Bluetooth, and GPS",
+        "cat_id": "Camera",
+        "seller_id": "anubhav",
+        "status": "active"
+    },
+    {
+        "name":"Nikon Z9",
+        "images":[
+            "https://m.media-amazon.com/images/I/91AaYS+B8yL._AC_SX450_.jpg",
+            "https://m.media-amazon.com/images/I/912d8nY6dSL._AC_SX466_.jpg",
+            "https://m.media-amazon.com/images/I/7180GVYBg5L._AC_SY450_.jpg"    
+        ],
+        "price":"5499",
+        "base_feature":"45 MP Full-Frame CMOS Sensor, 8K Video Recording",
+        "stock": 20,
+        "description":"Nikon Z9 Full-Frame Mirrorless Camera with 45 MP Full-Frame CMOS Sensor, EXPEED 7 Image Processor, 8K Video Recording, Real-Time Eye AF, 5-Axis Image Stabilization, 3.2-inch LCD Touchscreen, Wi-Fi, Bluetooth, and GPS",
+        "cat_id": "Camera",
+        "seller_id": "anubhav",
+        "status": "active"
+    }
+
+]

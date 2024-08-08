@@ -65,8 +65,9 @@ def user_registration(request: Request):
 def landing_page(request: Request):
     user = get_current_user(request)
     categories = get_random_4_category()
+    nav_categories = get_all_category()
     products = get_random_product()
-    return templates.TemplateResponse("user_landing.html",{"request":request,"user":user,"categories":categories,"products":products})
+    return templates.TemplateResponse("user_landing.html",{"request":request,"user":user,"categories":categories,"products":products,"nav_categories":nav_categories})
 #category page
 @router.get('/user_category/{cat_id}')
 def cat_page(request: Request, cat_id: str):
@@ -90,6 +91,15 @@ def search(request: Request, query: str):
         res_products += cat_product
     elif res_products == None and cat_list != None:
         res_products += cat_product
+    unique = [i['id'] for i in res_products]
+    unique = list(set(unique))
+    unique_list = []
+    for i in res_products:
+        if i['id'] in unique:
+            unique_list.append(i)
+            unique.remove(i['id'])
+    res_products = unique_list
+    
     return templates.TemplateResponse("search_page.html",{"request":request,"user":user,"categories":categories,"products":res_products,"query":query})
 
 #product page
