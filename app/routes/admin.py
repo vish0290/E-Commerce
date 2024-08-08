@@ -163,7 +163,7 @@ def seller_register(request: Request, name:str = Form(...), email: str=Form(...)
     admin = get_current_admin(request)
     item = get_seller_mail(email)
     if item != None:
-        return templates.TemplateResponse("add_seller.html", {"request": request,"message":"Seller Already exist"})
+        return templates.TemplateResponse("add_seller.html", {"request": request,"admin":admin,"message":"Seller Already exist"})
     else:
         password = hash_password(password)
         seller = Seller(name=name,email=email,password=password,phone=number,status='active')
