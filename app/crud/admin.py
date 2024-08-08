@@ -6,11 +6,10 @@ from pymongo.errors import PyMongoError
 
 def get_admin_username(username):
     query = {'username':username}
-    try:
-        return admin_serial(admin_db.find_one(query))
-    except PyMongoError as e:
-        print(f"Error getting admin: {e}")
-        return None
+    admin = admin_db.find_one(query)
+    if admin:
+        return admin_serial(admin)
+    return None
 
 
 

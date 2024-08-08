@@ -36,7 +36,11 @@
 </head>
 <body>
     {%if admin%}
-    
+    {%if error%}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {%endif%}
     <div class="form-container">
         <h2>Edit Category</h2>
         <form action="/category_edit/" method="post">

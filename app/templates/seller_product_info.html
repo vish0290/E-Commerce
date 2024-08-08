@@ -94,6 +94,8 @@
       <div class="alert alert-success">Product added Successfully</div>
       {% elif message == 'error' %}
       <div class="alert alert-danger">Error adding product</div>
+      {% elif message == 'exist' %}
+      <div class="alert alert-danger">Product already exists</div>
       {% endif %}
       <h1 style="padding: 5px;" >Edit Product</h1>
       {% if product%}

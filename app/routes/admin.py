@@ -276,10 +276,12 @@ def search_product_name(request: Request, query: str = Query(...)):
 @router.get("/manage_category_edit/{category_id}", response_class=HTMLResponse)
 def edit_category_page(request: Request, category_id: str):
     category = get_category(category_id)
-    return templates.TemplateResponse("edit_category.html", {"request": request, "category": category})
+    admin = get_current_admin(request)
+    return templates.TemplateResponse("edit_category.html", {"request": request, "category": category, "admin": admin})
 
 @router.post('/category_edit/', response_class=HTMLResponse)
 def category_update(request: Request, category_id: str = Form(...), name: str = Form(...), description: str = Form(...), image:str= Form(...)):
+    admin  = get_current_admin(request)
     category_data=get_category(category_id)
     if category_data is None:
         return templates.TemplateResponse("500.html", {"request": request, "error": "Category not found"})
@@ -288,7 +290,7 @@ def category_update(request: Request, category_id: str = Form(...), name: str = 
     ack = update_category(category, category_id)
     
     if not ack:
-        return templates.TemplateResponse("edit_category.html", {"request": request, "error": "Category name already exists", "category": category_data})
+        return templates.TemplateResponse("edit_category.html", {"request": request,"admin":admin ,"error": "Category name already exists", "category": category_data})
     elif ack:
         admin = get_current_admin(request)
         categories = get_all_category()

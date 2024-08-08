@@ -104,6 +104,9 @@ async def update_product_info(request: Request,product_id: str, name:str = Form(
     seller = get_current_seller(request)
     seller_info = get_seller_mail(seller)
     product = get_product(product_id)
+    exist_product = get_product_name(name)
+    if exist_product != None and exist_product['seller_id'] == seller_info['id'] and exist_product['id'] != product_id:
+        return templates.TemplateResponse("seller_product_info.html",{'request':request,"seller":seller,"product":product,"categories":get_all_category(),'message':'exist'})
     if product['seller_id'] == seller_info['id']:
         product['name'] = name
         product['price'] = price
