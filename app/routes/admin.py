@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import Admin, Category, Product, User, Order, Seller
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
-from app.crud.admin import get_admin_username
+from app.crud.admin import get_admin_username, update_admin
 from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category,search_category,update_category
 from app.crud.product import get_all_product,del_product,get_product,search_product
 from app.crud.user import get_all_user, get_user, del_user,search_users_by_name
@@ -292,6 +292,40 @@ def category_update(request: Request, category_id: str = Form(...), name: str = 
 
     else:
         return templates.TemplateResponse("500.html", {"request": request})
+@router.get("/admin_forgot_password",response_class=HTMLResponse)
+def admin_forgot_password(request:Request):
+    return templates.TemplateResponse("admin_reset_password.html", {"request":request})
+
+@router.post("/admin_reset_password", response_class=HTMLResponse)
+def admin_reset_password(
+    request: Request,
+    username: str = Form(...),
+    current_password: str = Form(...),
+    new_password: str = Form(...),
+    confirm_new_password: str = Form(...)
+):
+    if new_password != confirm_new_password:
+        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "New passwords do not match."})
+
+    # Query for the admin user
+    admin = get_admin_username(username)
+    if not admin:
+        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "User doesn't exist."})
+
+    # Hash the current password
+    hashed_current_password = hash_password(current_password)
+
+    # Verify the current password
+    if  verify_password(admin['password'],current_password)==False:
+        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "Current password is incorrect."})
+
+    # Hash the new password
+    hashed_new_password = hash_password(new_password)
+
+    # Update the admin password in the database
+    if update_admin(admin["username"], hashed_new_password):
+        return templates.TemplateResponse('admin_login.html',{'request':request,"success":"password updated successfully"})
+        
+    else:
+        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "Error updating password."})
     
-    
-   
