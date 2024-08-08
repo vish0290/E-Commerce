@@ -34,6 +34,7 @@ class Seller(BaseModel):
     email: str
     password: str
     phone: int
+    last_login: Optional[str] = None
     status: str = "active"
      
     

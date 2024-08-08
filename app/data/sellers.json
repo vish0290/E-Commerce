@@ -1,0 +1,30 @@
+[
+    {
+        "name":"vish",
+        "email":"vish@gmail.com",
+        "password":"test1234",
+        "phone":"1234567890",
+        "status":"active"
+    },
+    {
+        "name":"naveen",
+        "email":"naveen@gmail.com",
+        "password":"test1234",
+        "phone":"1234567890",
+        "status":"active"
+    },
+    {
+        "name":"lavanya",
+        "email":"lavanya@gmail.com",
+        "password":"test1234",
+        "phone":"1234567890",
+        "status":"active"
+    },
+    {
+        "name":"anubhav",
+        "email":"anubhav@gmail.com",
+        "password":"test1234",
+        "phone":"1234567890",
+        "status":"active"
+    }
+]

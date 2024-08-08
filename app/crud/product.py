@@ -95,24 +95,35 @@ def search_product(query:str):
         print(f"An error occurred: {e}")
         return None
 
-def get_product_by_cat_id_sort(cat_id,sort):
-    query = {'cat_id':cat_id,'status':'active'}
-    try:
-        return list_product(product_db.find(query).sort('price',sort))
-    except:
-        return None
-
-def get_product_by_cat_id_sort(cat_id, sort):
+def get_product_by_cat_id_sort(cat_id, sort_order):
     query = {'cat_id': cat_id, 'status': 'active'}
     try:
-        products = list_product(product_db.find(query))
-        out_of_stock_exists = any(product['stock'] == 0 for product in products)
-        if out_of_stock_exists:
-            sort = -sort
-        sorted_products = list_product(product_db.find(query).sort('price', sort))
-        return sorted_products
-    except:
+        # Retrieve the products from the database
+        products = list(product_db.find(query))
+        
+        # Convert price from string to float and sort manually
+        products.sort(key=lambda x: (
+            x['stock'] == 0,             # First, sort by stock (True if stock is 0, so it goes last)
+            float(x['price'])            # Then, sort by price
+        ), reverse=(sort_order == -1))
+        
+        return list_product(products)
+    except Exception as e:
+        print(f"An error occurred: {e}")
         return None
+
+
+# def get_product_by_cat_id_sort(cat_id, sort):
+#     query = {'cat_id': cat_id, 'status': 'active'}
+#     try:
+#         products = list_product(product_db.find(query))
+#         out_of_stock_exists = any(product['stock'] == 0 for product in products)
+#         if out_of_stock_exists:
+#             sort = -sort
+#         sorted_products = list_product(product_db.find(query).sort('price', sort))
+#         return sorted_products
+#     except:
+#         return None
     
 def search_product_by_name_seller_id(seller_id,name):
     query = {'seller_id':seller_id,'name':{'$regex':name,"$options": "i"},'status':'active'}
