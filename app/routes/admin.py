@@ -43,10 +43,14 @@ def logout(request: Request):
     logout_admin(request)
     return RedirectResponse(url='/admin_login',status_code=302)
 
-
+@router.get('/add_category',response_class=HTMLResponse)
+def category_page(request:Request):
+    admin=get_current_admin(request)
+    return templates.TemplateResponse('add_category.html',{'request':request,"admin":admin})
 
 @router.post('/add_category',response_class=HTMLResponse)
 def add_category_new(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
+    admin=get_current_admin(request)
     category = Category(name=name,description=description,image=image,last_change=str(datetime.datetime.now()))
     ack = add_new_category(category)
     if ack:
