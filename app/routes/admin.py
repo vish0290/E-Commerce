@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse,RedirectResponse
 from app.model.models import Admin, Category, Product, User, Order, Seller
 from fastapi.templating import Jinja2Templates
 from bson import ObjectId
-from app.crud.admin import  get_admin_username,update_admin
+from app.crud.admin import get_admin_username
 from app.crud.category import add_new_category, get_all_category, get_category, del_category, restore_category,search_category,update_category
 from app.crud.product import get_all_product,del_product,get_product,search_product
 from app.crud.user import get_all_user, get_user, del_user,search_users_by_name
@@ -26,8 +26,7 @@ def login_page(request: Request):
 @router.post('/admin_login',response_class=HTMLResponse)
 def login(request: Request, username:str = Form(...), password:str = Form(...)):
     admin = get_admin_username(username)
-    print(admin['password'],hash_password(password))
-    if  admin != None and verify_password(admin['password'],password):
+    if admin != None and verify_password(admin['password'],password):
         login_admin(request,str(admin['username']))
         return RedirectResponse(url='/admin_dashboard',status_code=302)
     return templates.TemplateResponse('admin_login.html',{'request':request,"error":"invalid username or password"})
@@ -44,22 +43,17 @@ def logout(request: Request):
     logout_admin(request)
     return RedirectResponse(url='/admin_login',status_code=302)
 
-@router.get('/add_category',response_class=HTMLResponse)
-def category_page(request: Request):
-    admin = get_current_admin(request)
-    return templates.TemplateResponse('add_category.html',{'request':request,"admin":admin})
+
 
 @router.post('/add_category',response_class=HTMLResponse)
 def add_category_new(request: Request, name:str = Form(...), description:str = Form(...), image:str = Form(...)):
-    admin = get_current_admin(request)
     category = Category(name=name,description=description,image=image,last_change=str(datetime.datetime.now()))
     ack = add_new_category(category)
     if ack:
         return RedirectResponse(url='/admin_dashboard',status_code=302)
     else:
-        return templates.TemplateResponse("add_category.html", {"request": request,"admin":admin,"message":"Something went wrong"})
-
-
+        return templates.TemplateResponse("add_category.html", {"request": request,"message":"Something went wrong"})
+    
 
 @router.get('/manage_user',response_class=HTMLResponse)
 def manage_user(request: Request):
@@ -165,7 +159,7 @@ def seller_register(request: Request, name:str = Form(...), email: str=Form(...)
     admin = get_current_admin(request)
     item = get_seller_mail(email)
     if item != None:
-        return templates.TemplateResponse("add_seller.html", {"request": request,"admin":admin,"message":"Seller Already exist"})
+        return templates.TemplateResponse("add_seller.html", {"request": request,"message":"Seller Already exist"})
     else:
         password = hash_password(password)
         seller = Seller(name=name,email=email,password=password,phone=number,status='active')
@@ -183,16 +177,40 @@ def delete_seller(request:Request,seller_id:str):
 
 
 @router.get('/search_user',response_class=HTMLResponse)
-def search_user(request: Request, query:str=Query(...)):
+def search_user(request: Request, query: str = Query(...)):
     admin = get_current_admin(request)
-    users =  search_users_by_name(query)
-    return templates.TemplateResponse('manage_user.html',{'request':request,"admin":admin,"users":users})
+    users = search_users_by_name(query)
+    
+    if not users:
+        users = []
+        message = "No users found"
+    else:
+        message = ""
+    
+    return templates.TemplateResponse('manage_user.html', {
+        'request': request, 
+        "admin": admin, 
+        "users": users, 
+        "message": message
+    })
+    
 
 @router.get('/search_category_name',response_class=HTMLResponse)
-def search_category_name(request:Request,query:str=Query(...)):
-    admin= get_current_admin(request)
-    categories =search_category(query)
-    return templates .TemplateResponse('manage_category.html',{'request':request,'admin':admin,'categories':categories})
+def search_category_name(request: Request, query: str = Query(...)):
+    admin = get_current_admin(request)
+    categories = search_category(query)
+    
+    if not categories:
+        message = "No categories found"
+    else:
+        message = ""
+    
+    return templates.TemplateResponse('manage_category.html', {
+        'request': request, 
+        'admin': admin, 
+        'categories': categories, 
+        'message': message
+    })
 
 @router.get('/search_seller_name',response_class=HTMLResponse)
 def search_seller_name(request:Request,query:str=Query(...)):
@@ -201,7 +219,7 @@ def search_seller_name(request:Request,query:str=Query(...)):
     return templates.TemplateResponse('manage_seller.html',{'request':request,'admin':admin,'sellers':sellers})
 
     
-    #return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})
+    return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})
 @router.get('/order_logs',response_class=HTMLResponse)
 def order_logs(request: Request):
     admin = get_current_admin(request)
@@ -223,39 +241,44 @@ def order_logs(request: Request):
             orders.append(order)
         
     return templates.TemplateResponse('manage_order.html',{'request':request,"admin":admin,"orders":orders})
-@router.get('/search_product_name',response_class=HTMLResponse)
-def search_product_name(request: Request,query:str=Query(...)):
+@router.get('/search_product_name', response_class=HTMLResponse)
+def search_product_name(request: Request, query: str = Query(...)):
     admin = get_current_admin(request)
     products = search_product(query)
-    categories = get_all_category()
-    categories = {category['id']:category['name'] for category in categories}
     
-    seller = get_all_seller()
-    seller = {seller['id']:seller['name'] for seller in seller}
+    if not products:
+        return templates.TemplateResponse('manage_product.html', {'request': request, "admin": admin, "data": [], "message": "No product found"})
+    
+    categories = get_all_category()
+    categories = {category['id']: category['name'] for category in categories}
+    
+    sellers = get_all_seller()
+    sellers = {seller['id']: seller['name'] for seller in sellers}
+    
     data = []
     for product in products:
-        temp = {}
-        temp['id']=product['id']
-        temp['product'] = product['name']
-        temp['category'] = categories[product['cat_id']]
-        temp['price'] = product['price']
-        temp['seller'] = seller[product['seller_id']]
-        temp['quantity'] = product['stock']
+        temp = {
+            'id': product['id'],
+            'product': product['name'],
+            'category': categories.get(product['cat_id'], 'Unknown'),
+            'price': product['price'],
+            'seller': sellers.get(product['seller_id'], 'Unknown'),
+            'quantity': product['stock']
+        }
         data.append(temp)
-    return templates.TemplateResponse('manage_product.html',{'request':request,"admin":admin,"data":data})
+    
+    return templates.TemplateResponse('manage_product.html', {'request': request, "admin": admin, "data": data})
     
 @router.get("/manage_category_edit/{category_id}", response_class=HTMLResponse)
 def edit_category_page(request: Request, category_id: str):
-    admin = get_current_admin(request)
     category = get_category(category_id)
-    return templates.TemplateResponse("edit_category.html", {"request": request,"admin":admin, "category": category})
+    return templates.TemplateResponse("edit_category.html", {"request": request, "category": category})
 
 @router.post('/category_edit/', response_class=HTMLResponse)
 def category_update(request: Request, category_id: str = Form(...), name: str = Form(...), description: str = Form(...), image:str= Form(...)):
     category_data=get_category(category_id)
-    admin = get_current_admin(request)
     if category_data is None:
-        return templates.TemplateResponse("500.html", {"request": request,"admin":admin, "error": "Category not found"})
+        return templates.TemplateResponse("500.html", {"request": request, "error": "Category not found"})
     
     category = Category(name=name, description=description, image=image, last_change=str(datetime.datetime.now()), status='active')
     ack = update_category(category, category_id)
@@ -270,34 +293,5 @@ def category_update(request: Request, category_id: str = Form(...), name: str = 
     else:
         return templates.TemplateResponse("500.html", {"request": request})
     
-@router.get("/admin_forgot_password", response_class=HTMLResponse)
-def admin_forgot_password(request: Request):
-    return templates.TemplateResponse("admin_reset_password.html", {"request": request})
-
-@router.post("/admin_reset_password", response_class=HTMLResponse)
-def admin_reset_password(
-    request: Request,
-    username: str = Form(...),
-    current_password: str = Form(...),
-    new_password: str = Form(...),
-    confirm_new_password: str = Form(...)
-):
-    if new_password != confirm_new_password:
-        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "New passwords do not match."})
-
-    admin = get_admin_username(username)
-    if not admin:
-        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "User doesn't exist."})
-    
-    res = verify_password(admin['password'],current_password)
-    print(res)
-    if verify_password(admin['password'],current_password) == False:
-        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "Current password is incorrect."})
-
-    if update_admin(admin["username"], hash_password(new_password)):
-        return templates.TemplateResponse('admin_login.html',{'request':request,"success":"Password updated successfully"})
-    else:
-        return templates.TemplateResponse("admin_reset_password.html", {"request": request, "error": "Error updating password."})
-
     
    
