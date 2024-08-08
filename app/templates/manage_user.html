@@ -114,11 +114,9 @@
             </div>
         </form>
 
-        {% if users %}
         <div class="back-button">
             <a href="/manage_user" class="btn btn-secondary">Back to Full List</a>
         </div>
-        {% endif %}
 
         <div class="table-container">
             <table class="table table-striped">
@@ -147,7 +145,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="text-center">{{ message }}</td>
+                        <td colspan="5" class="text-center">{{ message }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
