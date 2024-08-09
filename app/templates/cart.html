@@ -310,8 +310,8 @@
     <script>
     function proceedToCheckout() {
             const products = "{{products}}";
-            console.log(products);
-            if (isNaN(products) || products == 0) {
+            // console.log(products);
+            if (isNaN(products) && products == 0) {
                 alert("No products in cart!");
                 return;
             }
