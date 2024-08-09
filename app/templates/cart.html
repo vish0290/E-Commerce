@@ -297,9 +297,35 @@
   {% endfor %}
   <div style="position: absolute;
         bottom: 100px; font-size: larger;">Total: € {{super_total}}</div>
+        <button type="button" class="btn btn-secondary checkout-button"
+        style="vertical-align: bottom; color: black; text-decoration: none;"
+        onclick="proceedToCheckout()"
+        {% if products is none %}
+        disabled
+        style="cursor: not-allowed; opacity: 0.5;"
+        {% endif %}>
+        Proceed to Checkout
+    </button>
+    
+    <script>
+    function proceedToCheckout() {
+            const products = "{{products}}";
+            console.log(products);
+            if (isNaN(products) || products == 0) {
+                alert("No products in cart!");
+                return;
+            }
+            else{
+              window.location.href = "/order_confirmed";
+            }
+
+        
+    }
+    </script>
+    
   
-  <button class="checkout-button" style="vertical-align: bottom;"><a style="color: black; text-decoration: none;" href="/order_confirmed" >Proceed to Checkout</a></button>
-</div>
+
+  </div>
 {% else %} 
  <script>
   window.location.href = "/404"
